@@ -1,0 +1,6 @@
+- You need to update the polaroid images on the landing page and only those images.
+- You are not allowed to create any additional files.
+- The polaroids must be arranged in a ciruclar-ish fashin around the "Why choose Octopets" section.
+- No two polaroids should completely overlap each other.
+- Polaroids should be very slowly moving on the page, with a smooth motion. No jarring transitions.
+- There must not be any on-hover motion at all. Highlight effect, as is there now, is OK.
