@@ -11,11 +11,6 @@ video: # (optional) Leave it empty if there is no video
 version: 1.0
 ---
 
-A simple web app for discovering and sharing pet-friendly homes, parks, cafés, and custom venues for your fur babies.
-
-![Octopets landing page](media/octopets-landing.gif)
-
-
 ## 🙋‍♂️ About the project
 
 Octopets is a platform designed to help pet owners find and share pet-friendly venues. The application allows users to:
@@ -23,6 +18,8 @@ Octopets is a platform designed to help pet owners find and share pet-friendly v
 - Browse and search for pet-friendly venues by pet type and venue type
 - View details about each venue, including allowed pet types, amenities, and photos
 - Navigate between main pages: Home, Listings, Add Listing, Listing Details, and Reviews
+
+![Octopets landing page](media/octopets-landing.gif)
 
 ## 🏗️ Tech stack
 
