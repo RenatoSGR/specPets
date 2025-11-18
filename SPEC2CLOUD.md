@@ -5,8 +5,8 @@ authors: RenatoSGR
 category: AI Apps & Agents # AI Apps & Agents | App Modernization | Data Centric Apps | Agentic DevOps
 industry: Cross-Industry # Cross-Industry | Finantial Services | Healthcare & Life Sciences | Manufacturing | Retail & Consumer Goods | Government & Public Sector | Education | Energy & Resources | Telco & Media | Mobility & Automotive
 services: [Azure AI Foundry, Azure Container Apps] # Full list here: https://azure.microsoft.com/en-us/products/
-languages: [.NET | React] # .NET | Python | Java | Go | TypeSscript | JavaScript | BICEP | Terraform
-frameworks: [ Microsoft Agent Framework] #| Aspire | LangChain | Pydantic AI
+languages: [.NET] # .NET | Python | Java | Go | TypeSscript | JavaScript | BICEP | Terraform
+frameworks: [ Microsoft Agent Framework | React] #| Aspire | LangChain | Pydantic AI
 tags: [] # Labels used to categorize the template
 extensions: [] # Identifiers of the extensions being used in the template. Example: ms-windows-ai-studio.windows-ai-studio 
 thumbnail: thumbnail.png # (optional) Full URL or relative path with an image with 16:9 aspect ratio: 1280 × 720 (HD), 1920 × 1080 (Full HD)
