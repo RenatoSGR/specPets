@@ -1,0 +1,549 @@
+/* BookingStatusCard Styles (T126-T130) */
+
+.booking-status-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.booking-status-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Status Badge */
+.booking-status-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.status-icon {
+  font-size: 1rem;
+}
+
+.status-label {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Sitter Info */
+.booking-sitter-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sitter-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sitter-details {
+  flex: 1;
+}
+
+.sitter-details h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sitter-location {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.booking-price-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.price-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Booking Details Summary */
+.booking-details-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f8f8;
+  border-radius: 8px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  min-width: 80px;
+}
+
+.detail-value {
+  color: #333;
+}
+
+.status-reason {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status-reason .detail-label {
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.status-reason .detail-value {
+  font-style: italic;
+  color: #666;
+}
+
+/* Actions */
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-view-details,
+.btn-cancel-booking,
+.btn-message,
+.btn-leave-review {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-view-details {
+  flex: 1;
+  min-width: 150px;
+  background: transparent;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.btn-view-details:hover {
+  background: #f8f8f8;
+  border-color: #999;
+}
+
+.btn-cancel-booking {
+  flex: 1;
+  min-width: 150px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #ff6b6b;
+}
+
+.btn-cancel-booking:hover:not(:disabled) {
+  background: #fff0f0;
+  border-color: #ff6b6b;
+}
+
+.btn-cancel-booking:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-message {
+  flex: 1;
+  min-width: 150px;
+  background: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+  color: white;
+}
+
+.btn-message:hover {
+  background: linear-gradient(135deg, #FFA0B1, #FFB0BB);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 182, 193, 0.3);
+}
+
+.btn-leave-review {
+  flex: 1;
+  min-width: 150px;
+  background: linear-gradient(135deg, #fbbf24 0%, #ec4899 100%);
+  color: white;
+}
+
+.btn-leave-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+/* Cancel Dialog (T128-T130) */
+.cancel-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cancel-dialog {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: calc(100% - 40px);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cancel-dialog h3 {
+  margin: 0 0 24px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Cancellation Policy (T129) */
+.cancellation-policy {
+  margin-bottom: 24px;
+}
+
+.policy-notice {
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+}
+
+.policy-ok {
+  background: #e8f5e9;
+  border-left: 4px solid #4CAF50;
+}
+
+.policy-warning {
+  background: #fff3e0;
+  border-left: 4px solid #FFA500;
+}
+
+.policy-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.policy-text {
+  flex: 1;
+}
+
+.policy-text strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.policy-text p {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.hours-remaining {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  color: #333;
+}
+
+/* Cancel Form */
+.cancel-form {
+  margin-bottom: 20px;
+}
+
+.cancel-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.cancel-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.cancel-form textarea:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.cancel-form textarea:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Cancel Error */
+.cancel-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff0f0;
+  border-left: 3px solid #ff4444;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: #cc0000;
+}
+
+/* Cancel Actions */
+.cancel-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-keep-booking,
+.btn-confirm-cancel {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-keep-booking {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.btn-keep-booking:hover:not(:disabled) {
+  background: #e8e8e8;
+  border-color: #999;
+}
+
+.btn-confirm-cancel {
+  background: #ff6b6b;
+  color: white;
+}
+
+.btn-confirm-cancel:hover:not(:disabled) {
+  background: #ff5252;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+.btn-confirm-cancel:disabled,
+.btn-keep-booking:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Refund Confirmation (T130) */
+.refund-confirmation {
+  text-align: center;
+}
+
+.refund-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refund-confirmation h4 {
+  margin: 0 0 24px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.refund-details {
+  padding: 24px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.refund-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.refund-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.refund-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.refund-percentage {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.refund-message {
+  margin: 12px 0 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.btn-close-dialog {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close-dialog:hover {
+  background: linear-gradient(135deg, #FFA0B1, #FFB0BB);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 182, 193, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .booking-status-card {
+    padding: 16px;
+  }
+
+  .booking-status-badge {
+    position: static;
+    margin-bottom: 16px;
+    width: fit-content;
+  }
+
+  .booking-sitter-info {
+    flex-wrap: wrap;
+  }
+
+  .booking-price-info {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .booking-actions {
+    flex-direction: column;
+  }
+
+  .btn-view-details,
+  .btn-cancel-booking,
+  .btn-message {
+    width: 100%;
+  }
+
+  .cancel-dialog {
+    padding: 24px;
+  }
+
+  .cancel-actions {
+    flex-direction: column;
+  }
+
+  .btn-keep-booking,
+  .btn-confirm-cancel {
+    width: 100%;
+  }
+}

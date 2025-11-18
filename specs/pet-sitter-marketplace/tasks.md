@@ -23,11 +23,11 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Purpose**: Project initialization and marketplace-specific structure setup
 
-- [ ] T001 Create mock data source files: data/sitters.json, data/bookings.json, data/reviews.json, data/services.json
-- [ ] T002 [P] Create backend model files: backend/Models/PetOwner.cs, backend/Models/PetSitter.cs, backend/Models/Booking.cs
-- [ ] T003 [P] Create backend model files: backend/Models/Service.cs, backend/Models/Availability.cs, backend/Models/Message.cs, backend/Models/Pet.cs
-- [ ] T004 Create repository interface files in backend/Repositories/Interfaces/
-- [ ] T005 Review existing authentication patterns in backend/Program.cs and document approach for marketplace
+- [X] T001 Create mock data source files: data/sitters.json, data/bookings.json, data/reviews.json, data/services.json
+- [X] T002 [P] Create backend model files: backend/Models/PetOwner.cs, backend/Models/PetSitter.cs, backend/Models/Booking.cs
+- [X] T003 [P] Create backend model files: backend/Models/Service.cs, backend/Models/Availability.cs, backend/Models/Message.cs, backend/Models/Pet.cs
+- [X] T004 Create repository interface files in backend/Repositories/Interfaces/
+- [X] T005 Review existing authentication patterns in backend/Program.cs and document approach for marketplace
 
 ---
 
@@ -37,16 +37,16 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Update backend/Data/AppDbContext.cs to add DbSet properties for PetOwner, PetSitter, Booking, Service, Availability, Message, Pet
-- [ ] T007 Implement SeedData method in backend/Data/AppDbContext.cs for marketplace entities (sync with data/*.json)
-- [ ] T008 Create base repository implementations: backend/Repositories/PetOwnerRepository.cs, backend/Repositories/PetSitterRepository.cs
-- [ ] T009 [P] Create base repository implementations: backend/Repositories/BookingRepository.cs, backend/Repositories/ServiceRepository.cs
-- [ ] T010 [P] Create base repository implementations: backend/Repositories/AvailabilityRepository.cs, backend/Repositories/MessageRepository.cs, backend/Repositories/PetRepository.cs
-- [ ] T011 Register all new repositories in backend/Program.cs dependency injection
-- [ ] T012 Create frontend service files: frontend/src/data/sitterService.ts, frontend/src/data/bookingService.ts, frontend/src/data/messageService.ts
-- [ ] T013 Create frontend mock data files: frontend/src/data/sitterData.ts, frontend/src/data/bookingData.ts (sync with data/*.json)
-- [ ] T014 Update frontend/src/config/appConfig.ts to handle marketplace feature toggle if needed
-- [ ] T015 Create frontend routing structure in App.tsx for marketplace routes (placeholder components)
+- [X] T006 Update backend/Data/AppDbContext.cs to add DbSet properties for PetOwner, PetSitter, Booking, Service, Availability, Message, Pet
+- [X] T007 Implement SeedData method in backend/Data/AppDbContext.cs for marketplace entities (sync with data/*.json)
+- [X] T008 Create base repository implementations: backend/Repositories/PetOwnerRepository.cs, backend/Repositories/PetSitterRepository.cs
+- [X] T009 [P] Create base repository implementations: backend/Repositories/BookingRepository.cs, backend/Repositories/ServiceRepository.cs
+- [X] T010 [P] Create base repository implementations: backend/Repositories/AvailabilityRepository.cs, backend/Repositories/MessageRepository.cs, backend/Repositories/PetRepository.cs
+- [X] T011 Register all new repositories in backend/Program.cs dependency injection
+- [X] T012 Create frontend service files: frontend/src/data/sitterService.ts, frontend/src/data/bookingService.ts, frontend/src/data/messageService.ts
+- [X] T013 Create frontend mock data files: frontend/src/data/sitterData.ts, frontend/src/data/bookingData.ts (sync with data/*.json)
+- [X] T014 Update frontend/src/config/appConfig.ts to handle marketplace feature toggle if needed
+- [X] T015 Create frontend routing structure in App.tsx for marketplace routes (placeholder components)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

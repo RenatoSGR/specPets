@@ -1,838 +1,539 @@
-# Implementation Quickstart Guide
+# Quickstart Guide: Pet Sitter Marketplace Development
 
-## Overview
-
-This guide provides step-by-step instructions for implementing the Octopets Pet Sitter Marketplace Platform using .NET Aspire orchestration with React frontend, ASP.NET Core backend, and Python AI agents.
-
----
+**Feature**: 001-pet-sitter-marketplace  
+**Last Updated**: October 21, 2025
 
 ## Prerequisites
 
-### Required Software
-- **.NET 9.0 SDK** or later
-- **Node.js 18+** with npm
-- **Python 3.11+** 
-- **Azure CLI** (for authentication)
-- **Docker Desktop** (for deployment)
-- **Visual Studio Code** with extensions:
-  - C# Dev Kit
-  - .NET Aspire
-  - Python
-  - React/TypeScript
+Before starting development on the Pet Sitter Marketplace feature, ensure you have:
 
-### Azure Services Setup
-1. **Azure AI Foundry** (formerly AI Studio)
-   - Create AI Foundry project
-   - Deploy GPT-4 model
-   - Note: endpoint URL and API key
-2. **Azure OpenAI Service** 
-   - GPT-4 for agent orchestration
-   - Text embedding model for vector search
-3. **Azure Storage Account**
-   - Blob containers for file uploads
-   - Configure CORS for frontend access
+### Required Tools
 
-### Authentication Setup
+- [ ] **.NET SDK 9.0+**: `dotnet --version` (for backend and Aspire)
+- [ ] **Node.js 18+**: `node --version` (for React frontend)
+- [ ] **Python 3.8+**: `python --version` (for AI agents)
+- [ ] **uv**: `uv --version` (Python package manager) - Install: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- [ ] **Azure CLI**: `az --version` - Install: [Azure CLI docs](https://docs.microsoft.com/cli/azure/install-azure-cli)
+- [ ] **Git**: `git --version`
+
+### Azure Setup
+
+1. **Azure CLI Authentication**:
+   ```bash
+   az login
+   az account set --subscription <your-subscription-id>
+   ```
+
+2. **Verify Authentication**:
+   ```bash
+   az account show
+   ```
+   
+   This authentication is **required** for AI agents to use `DefaultAzureCredential`.
+
+### GitHub Authentication (for Python packages)
+
+Some Python dependencies are hosted on GitHub Packages:
+
 ```bash
-# Login to Azure CLI (required for agents)
-az login
-
-# Verify authentication context
-az account show
+gh auth login
 ```
 
 ---
 
-## Project Structure Setup
+## Initial Setup
 
-### 1. Create Solution Structure
+### 1. Clone and Navigate to Repository
+
 ```bash
-# Create root directory
-mkdir octopets-marketplace
-cd octopets-marketplace
-
-# Create .NET solution
-dotnet new sln -n OctopetsMarketplace
-
-# Create project directories
-mkdir src
-mkdir src/AppHost
-mkdir src/ServiceDefaults  
-mkdir src/Backend
-mkdir src/Frontend
-mkdir src/Agents
-mkdir src/Agents/ListingsAgent
-mkdir src/Agents/SitterAgent
-mkdir src/Agents/OrchestratorAgent
-mkdir docs
-mkdir scripts
+git clone https://github.com/maddymontaquila/octopets.git
+cd octopets
+git checkout 001-pet-sitter-marketplace
 ```
 
-### 2. Initialize .NET Aspire AppHost
+### 2. Verify Existing Infrastructure
+
+The Octopets project already has the core infrastructure. Verify:
+
 ```bash
-cd src/AppHost
+# Check Aspire AppHost
+ls apphost/AppHost.cs
 
-# Create Aspire AppHost project
-dotnet new aspire-apphost -n AppHost
+# Check backend
+ls backend/Program.cs
 
-# Add Aspire packages
-dotnet add package Aspire.Hosting.Python
-dotnet add package Aspire.Hosting.NodeJs
+# Check frontend
+ls frontend/package.json
+
+# Check existing agents
+ls agent/agent.py sitter-agent/pet_sitter_agent.py orchestrator-agent/orchestrator.py
 ```
 
-### 3. Create Service Defaults Project
+### 3. Install Dependencies
+
+**Backend** (if not already installed):
 ```bash
-cd ../ServiceDefaults
-
-# Create service defaults project
-dotnet new aspire-servicedefaults -n ServiceDefaults
-
-# Add to solution
-cd ../../
-dotnet sln add src/AppHost/AppHost.csproj
-dotnet sln add src/ServiceDefaults/ServiceDefaults.csproj
-```
-
----
-
-## Backend Implementation
-
-### 1. Create ASP.NET Core API
-```bash
-cd src/Backend
-
-# Create Web API project
-dotnet new webapi -n Backend
-
-# Add required packages
-dotnet add package Microsoft.EntityFrameworkCore.InMemory
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
-dotnet add package Microsoft.Identity.Web
-dotnet add package Scalar.AspNetCore
-
-# Add service defaults reference
-dotnet add reference ../ServiceDefaults/ServiceDefaults.csproj
-
-# Add to solution
-cd ../../
-dotnet sln add src/Backend/Backend.csproj
-```
-
-### 2. Configure Backend Dependencies (Backend.csproj)
-```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="3.2.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../ServiceDefaults/ServiceDefaults.csproj" />
-  </ItemGroup>
-</Project>
-```
-
-### 3. Implement Core Backend Files
-
-**Program.cs**
-```csharp
-using Backend.Data;
-using Microsoft.EntityFrameworkCore;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add service defaults and Aspire client integrations
-builder.AddServiceDefaults();
-
-// Add Entity Framework with in-memory database
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("OctopetsDb"));
-
-// Add repositories
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPetRepository, PetRepository>();
-builder.Services.AddScoped<IPetSitterRepository, PetSitterRepository>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-
-// Add authentication
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = builder.Configuration["Authentication:Authority"];
-        options.TokenValidationParameters.ValidateAudience = false;
-    });
-
-builder.Services.AddAuthorization();
-
-// Add API services
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-}
-
-app.UseHttpsRedirection();
-app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map API endpoints
-app.MapGroup("/api/users").MapUserEndpoints();
-app.MapGroup("/api/pets").MapPetEndpoints();
-app.MapGroup("/api/sitters").MapSitterEndpoints();
-app.MapGroup("/api/bookings").MapBookingEndpoints();
-app.MapGroup("/api/messages").MapMessageEndpoints();
-app.MapGroup("/api/search").MapSearchEndpoints();
-
-// Map default endpoints
-app.MapDefaultEndpoints();
-
-// Ensure database is created and seeded
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-}
-
-app.Run();
-```
-
-**Data/AppDbContext.cs** (Create directory and file)
-```csharp
-using Microsoft.EntityFrameworkCore;
-using Backend.Models;
-
-namespace Backend.Data;
-
-public class AppDbContext : DbContext
-{
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    public DbSet<User> Users { get; set; }
-    public DbSet<Pet> Pets { get; set; }
-    public DbSet<PetSitter> PetSitters { get; set; }
-    public DbSet<Booking> Bookings { get; set; }
-    public DbSet<Message> Messages { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Configure entity relationships and constraints
-        modelBuilder.Entity<Pet>()
-            .HasOne(p => p.Owner)
-            .WithMany(u => u.Pets)
-            .HasForeignKey(p => p.OwnerId);
-
-        modelBuilder.Entity<Booking>()
-            .HasOne(b => b.PetOwner)
-            .WithMany()
-            .HasForeignKey(b => b.PetOwnerId);
-
-        // Seed initial data
-        SeedData(modelBuilder);
-    }
-
-    private void SeedData(ModelBuilder modelBuilder)
-    {
-        // Seed users, pets, sitters according to data-model.md specifications
-        // Implementation details in actual project files
-    }
-}
-```
-
----
-
-## Frontend Implementation
-
-### 1. Create React Application
-```bash
-cd src/Frontend
-
-# Create React TypeScript app
-npx create-react-app . --template typescript
-
-# Install additional dependencies
-npm install @types/node @types/react @types/react-dom
-npm install react-router-dom @types/react-router-dom
-npm install @microsoft/signalr
-npm install axios
-npm install @headlessui/react @heroicons/react
-npm install tailwindcss
-
-# Install development dependencies
-npm install --save-dev @playwright/test
-```
-
-### 2. Configure Frontend Dependencies (package.json)
-```json
-{
-  "name": "octopets-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@headlessui/react": "^2.0.0",
-    "@heroicons/react": "^2.0.0",
-    "@microsoft/signalr": "^8.0.0",
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "axios": "^1.6.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0",
-    "react-scripts": "5.0.1",
-    "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.0"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.40.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "test:e2e": "playwright test"
-  }
-}
-```
-
-### 3. Configure Environment Variables (.env.development)
-```bash
-# Backend API URL (set by Aspire)
-REACT_APP_API_BASE_URL=https://localhost:7001
-
-# Agent endpoints (set by Aspire)  
-REACT_APP_LISTINGS_AGENT_URL=https://localhost:8001
-REACT_APP_SITTER_AGENT_URL=https://localhost:8002
-REACT_APP_ORCHESTRATOR_AGENT_URL=https://localhost:8003
-
-# Feature flags
-REACT_APP_USE_MOCK_DATA=true
-REACT_APP_ENABLE_AI_FEATURES=true
-
-# Authentication
-REACT_APP_AUTH_DOMAIN=your-auth-domain
-REACT_APP_AUTH_CLIENT_ID=your-client-id
-```
-
----
-
-## Python AI Agents Implementation
-
-### 1. Create Listings Agent
-```bash
-cd src/Agents/ListingsAgent
-
-# Create Python project structure
-touch pyproject.toml
-touch agent.py
-touch app.py
-mkdir data
-```
-
-**pyproject.toml**
-```toml
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
-name = "listings-agent"
-version = "0.1.0"
-dependencies = [
-    "fastapi>=0.104.0",
-    "uvicorn[standard]>=0.24.0",
-    "azure-ai-projects>=1.0.0b4",
-    "azure-identity>=1.15.0",
-    "python-multipart>=0.0.6",
-    "pydantic>=2.5.0"
-]
-
-[project.scripts]
-start = "uvicorn app:app --host 0.0.0.0 --port 8001"
-
-[tool.uv]
-dev-dependencies = [
-    "pytest>=7.4.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0"
-]
-```
-
-**agent.py**
-```python
-import os
-import asyncio
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AgentEventHandler, MessageDelta, AgentMessage
-
-class ListingsAgentEventHandler(AgentEventHandler):
-    def on_message_delta(self, delta: MessageDelta) -> None:
-        if delta.content:
-            for content_part in delta.content:
-                if content_part.type == "text" and content_part.text:
-                    print(f"Agent: {content_part.text.value}", end="", flush=True)
-
-    def on_done(self) -> None:
-        print("\n")
-
-class ListingsAgent:
-    def __init__(self):
-        self.client = AIProjectClient.from_connection_string(
-            conn_str=os.environ["AZURE_AI_PROJECT_CONNECTION_STRING"],
-            credential=DefaultAzureCredential()
-        )
-        
-        # Use existing agent or create new one
-        self.agent_id = os.environ.get("LISTINGS_AGENT_ID")
-        if not self.agent_id:
-            self.agent = self._create_agent()
-            self.agent_id = self.agent.id
-        
-    def _create_agent(self):
-        return self.client.agents.create_agent(
-            model="gpt-4",
-            name="Pet Venue Listings Agent",
-            instructions="""You are an expert pet venue and service listings agent for Octopets marketplace.
-            
-Your role:
-- Help users find pet services and venues
-- Provide detailed information about pet sitters, daycares, and boarding facilities  
-- Use file search tool to access the comprehensive venue database
-- Answer questions about pricing, availability, and service details
-- Suggest suitable options based on pet type, location, and specific needs
-
-Guidelines:
-- Always be helpful and informative
-- Prioritize pet safety and owner peace of mind
-- Use location data to provide relevant nearby options
-- Include pricing and availability information when available
-- Suggest multiple options to give users choice""",
-            tools=[{"type": "file_search"}]
-        )
-
-    async def generate_response(self, query: str, thread_id: str = None) -> str:
-        try:
-            # Create or get thread
-            if thread_id:
-                thread = self.client.agents.get_thread(thread_id=thread_id)
-            else:
-                thread = self.client.agents.create_thread()
-            
-            # Create message
-            self.client.agents.create_message(
-                thread_id=thread.id,
-                role="user",
-                content=query
-            )
-            
-            # Run agent
-            run = self.client.agents.create_and_process_run(
-                thread_id=thread.id,
-                assistant_id=self.agent_id,
-                event_handler=ListingsAgentEventHandler()
-            )
-            
-            # Get latest message
-            messages = self.client.agents.list_messages(thread_id=thread.id, limit=1)
-            
-            if messages.data:
-                return messages.data[0].content[0].text.value
-            return "I apologize, but I couldn't generate a response."
-            
-        except Exception as e:
-            print(f"Error in generate_response: {e}")
-            return "I'm experiencing technical difficulties. Please try again later."
-
-# Global agent instance
-listings_agent = ListingsAgent()
-```
-
-### 2. Create FastAPI Application (app.py)
-```python
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
-from agent import listings_agent
-
-app = FastAPI(title="Listings Agent API", version="1.0.0")
-
-# Configure CORS
-frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[frontend_url],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-class QueryRequest(BaseModel):
-    query: str
-    thread_id: str = None
-
-class QueryResponse(BaseModel):
-    response: str
-    thread_id: str = None
-
-@app.post("/query", response_model=QueryResponse)
-async def process_query(request: QueryRequest):
-    try:
-        response = await listings_agent.generate_response(
-            query=request.query,
-            thread_id=request.thread_id
-        )
-        
-        return QueryResponse(
-            response=response,
-            thread_id=request.thread_id
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "agent": "listings"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
-```
-
-### 3. Create Similar Structure for Other Agents
-```bash
-# Copy ListingsAgent structure for SitterAgent and OrchestratorAgent
-cp -r src/Agents/ListingsAgent src/Agents/SitterAgent
-cp -r src/Agents/ListingsAgent src/Agents/OrchestratorAgent
-
-# Update port numbers and agent-specific logic in each
-# SitterAgent: Port 8002
-# OrchestratorAgent: Port 8003
-```
-
----
-
-## Aspire AppHost Configuration
-
-### 1. Configure AppHost Program.cs
-```csharp
-var builder = DistributedApplication.CreateBuilder(args);
-
-// Add service defaults
-var serviceDefaults = builder.AddProject<Projects.ServiceDefaults>("servicedefaults");
-
-// Add backend API
-var backend = builder.AddProject<Projects.Backend>("backend")
-    .WithReference(serviceDefaults);
-
-// Add React frontend
-var frontend = builder.AddNpmApp("frontend", "../Frontend")
-    .WithEnvironment("REACT_APP_API_BASE_URL", backend.GetEndpoint("http"))
-    .WithHttpEndpoint(port: 3000, env: "PORT")
-    .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
-
-// Add Python agents
-var listingsAgent = builder.AddPythonScript("listings-agent", "../Agents/ListingsAgent", "app.py")
-    .WithUvEnvironment()
-    .WithHttpEndpoint(port: 8001, env: "PORT")
-    .WithEnvironment("FRONTEND_URL", frontend.GetEndpoint("http"))
-    .PublishAsDockerFile();
-
-var sitterAgent = builder.AddPythonScript("sitter-agent", "../Agents/SitterAgent", "app.py")
-    .WithUvEnvironment()
-    .WithHttpEndpoint(port: 8002, env: "PORT")  
-    .WithEnvironment("FRONTEND_URL", frontend.GetEndpoint("http"))
-    .PublishAsDockerFile();
-
-var orchestratorAgent = builder.AddPythonScript("orchestrator-agent", "../Agents/OrchestratorAgent", "app.py")
-    .WithUvEnvironment()
-    .WithHttpEndpoint(port: 8003, env: "PORT")
-    .WithEnvironment("FRONTEND_URL", frontend.GetEndpoint("http"))
-    .WithEnvironment("LISTINGS_AGENT_URL", listingsAgent.GetEndpoint("http"))
-    .WithEnvironment("SITTER_AGENT_URL", sitterAgent.GetEndpoint("http"))
-    .PublishAsDockerFile();
-
-// Configure environment variables for frontend agent integration
-frontend
-    .WithEnvironment("REACT_APP_LISTINGS_AGENT_URL", listingsAgent.GetEndpoint("http"))
-    .WithEnvironment("REACT_APP_SITTER_AGENT_URL", sitterAgent.GetEndpoint("http"))
-    .WithEnvironment("REACT_APP_ORCHESTRATOR_AGENT_URL", orchestratorAgent.GetEndpoint("http"));
-
-// Configure backend CORS
-backend
-    .WithEnvironment("FRONTEND_URL", frontend.GetEndpoint("http"));
-
-// Set service dependencies
-frontend.WaitFor(backend);
-orchestratorAgent.WaitFor(listingsAgent).WaitFor(sitterAgent);
-
-var app = builder.Build();
-
-app.Run();
-```
-
----
-
-## Development Workflow
-
-### 1. Initial Setup Commands
-```bash
-# Navigate to root directory
-cd octopets-marketplace
-
-# Restore .NET dependencies
+cd backend
 dotnet restore
-
-# Install Python dependencies for all agents
-cd src/Agents/ListingsAgent && uv sync
-cd ../SitterAgent && uv sync  
-cd ../OrchestratorAgent && uv sync
-cd ../../..
-
-# Install frontend dependencies
-cd src/Frontend && npm install
-cd ../..
+cd ..
 ```
 
-### 2. Running the Application
+**Frontend** (if not already installed):
 ```bash
-# Start all services with Aspire
-cd src/AppHost
+cd frontend
+npm install
+cd ..
+```
+
+**Python Agents** (for each agent directory):
+```bash
+# Chat/listings agent
+cd agent
+uv sync
+cd ..
+
+# Sitter agent
+cd sitter-agent
+uv sync
+cd ..
+
+# Orchestrator agent
+cd orchestrator-agent
+uv sync
+cd ..
+```
+
+---
+
+## Running the Application
+
+### Single Command Start (Recommended)
+
+```bash
 aspire run
-
-# Or using dotnet run
-dotnet run --project AppHost
 ```
 
-This command will:
-- Start the backend API on https://localhost:7001
-- Start the frontend on http://localhost:3000
-- Start all three Python agents on their respective ports
-- Open Aspire Dashboard at http://localhost:15888
+This command:
+- Starts all services (backend, frontend, 3 Python agents)
+- Opens Aspire Dashboard at `http://localhost:15888`
+- Configures service discovery automatically
+- Enables hot reload for all services
 
-### 3. Development Commands
+**Aspire Dashboard** provides:
+- Service endpoints (click to open frontend, backend, etc.)
+- Logs from all services
+- Distributed tracing
+- Health checks
+- Environment variables
+
+### Alternative: dotnet run
+
 ```bash
-# Backend development
-cd src/Backend
-dotnet watch run
-
-# Frontend development  
-cd src/Frontend
-npm start
-
-# Individual agent development
-cd src/Agents/ListingsAgent
-uv run python app.py
-
-# Run tests
-cd src/Backend && dotnet test
-cd src/Frontend && npm test
-cd src/Frontend && npm run test:e2e
+dotnet run --project apphost
 ```
+
+Same behavior as `aspire run`.
 
 ---
 
-## Configuration Files
+## Development Workflows
 
-### 1. Backend appsettings.json
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
+### Adding New Backend Entities (Example: PetOwner)
+
+1. **Create Model** in `backend/Models/PetOwner.cs`:
+   ```csharp
+   public class PetOwner
+   {
+       public int Id { get; set; }
+       public string Email { get; set; } = string.Empty;
+       public string Name { get; set; } = string.Empty;
+       // ... additional fields from data-model.md
+   }
+   ```
+
+2. **Create Repository Interface** in `backend/Repositories/Interfaces/IPetOwnerRepository.cs`:
+   ```csharp
+   public interface IPetOwnerRepository
+   {
+       Task<PetOwner?> GetByIdAsync(int id);
+       Task<PetOwner?> GetByEmailAsync(string email);
+       Task<List<PetOwner>> GetAllAsync();
+       Task<PetOwner> CreateAsync(PetOwner owner);
+       Task<PetOwner> UpdateAsync(PetOwner owner);
+       Task<bool> DeleteAsync(int id);
+   }
+   ```
+
+3. **Implement Repository** in `backend/Repositories/PetOwnerRepository.cs`:
+   ```csharp
+   public class PetOwnerRepository : IPetOwnerRepository
+   {
+       private readonly AppDbContext _context;
+       public PetOwnerRepository(AppDbContext context) => _context = context;
+       
+       public async Task<PetOwner?> GetByIdAsync(int id) =>
+           await _context.PetOwners.FindAsync(id);
+       // ... implement other methods
+   }
+   ```
+
+4. **Register in AppDbContext** (`backend/Data/AppDbContext.cs`):
+   ```csharp
+   public DbSet<PetOwner> PetOwners { get; set; } = null!;
+   ```
+
+5. **Add Seed Data** in `AppDbContext.cs` `OnModelCreating`:
+   ```csharp
+   modelBuilder.Entity<PetOwner>().HasData(
+       new PetOwner { Id = 1, Email = "owner1@example.com", Name = "Jane Doe", ... }
+   );
+   ```
+
+6. **Create Endpoints** in `backend/Endpoints/PetOwnerEndpoints.cs`:
+   ```csharp
+   public static class PetOwnerEndpoints
+   {
+       public static void MapPetOwnerEndpoints(this WebApplication app)
+       {
+           var group = app.MapGroup("/api/pet-owners").WithTags("PetOwners");
+           
+           group.MapGet("/{id}", async (int id, IPetOwnerRepository repo) =>
+           {
+               var owner = await repo.GetByIdAsync(id);
+               return owner is not null ? Results.Ok(owner) : Results.NotFound();
+           })
+           .WithName("GetPetOwner")
+           .WithOpenApi();
+           
+           // ... additional endpoints
+       }
+   }
+   ```
+
+7. **Register Endpoints** in `backend/Program.cs`:
+   ```csharp
+   app.MapPetOwnerEndpoints();
+   ```
+
+8. **Register Repository** in `backend/Program.cs`:
+   ```csharp
+   builder.Services.AddScoped<IPetOwnerRepository, PetOwnerRepository>();
+   ```
+
+### Adding New Frontend Pages (Example: Search Page)
+
+1. **Create Page Component** in `frontend/src/pages/Search.tsx`:
+   ```typescript
+   import React, { useState, useEffect } from 'react';
+   
+   export default function Search() {
+       const [sitters, setSitters] = useState([]);
+       const [loading, setLoading] = useState(false);
+       
+       // ... search logic
+       
+       return (
+           <div>
+               <h1>Find Pet Sitters</h1>
+               {/* Search form, results list */}
+           </div>
+       );
+   }
+   ```
+
+2. **Add Route** in `frontend/src/App.tsx`:
+   ```typescript
+   import { BrowserRouter, Routes, Route } from 'react-router-dom';
+   import Search from './pages/Search';
+   
+   function App() {
+       return (
+           <BrowserRouter>
+               <Routes>
+                   <Route path="/search" element={<Search />} />
+                   {/* ... existing routes */}
+               </Routes>
+           </BrowserRouter>
+       );
+   }
+   ```
+
+3. **Create API Service** in `frontend/src/data/petSitterService.ts`:
+   ```typescript
+   const API_BASE = process.env.REACT_APP_API_URL || '';
+   
+   export interface PetSitter {
+       id: number;
+       name: string;
+       // ... fields from data-model.md
+   }
+   
+   export async function searchSitters(location: string, startDate: Date, endDate: Date): Promise<PetSitter[]> {
+       const response = await fetch(`${API_BASE}/api/sitters/search?location=${location}&start=${startDate.toISOString()}&end=${endDate.toISOString()}`);
+       if (!response.ok) throw new Error('Search failed');
+       return response.json();
+   }
+   ```
+
+4. **Hot Reload**: Changes auto-reload via Aspire - no manual restart needed
+
+### Modifying AI Agents
+
+1. **Edit Agent Code** (example: `sitter-agent/pet_sitter_agent.py`):
+   ```python
+   from azure.ai.inference import ChatAgent
+   
+   def create_sitter_agent(client):
+       agent = client.agents.create_agent(
+           model="gpt-4.1-mini",
+           name="Pet Sitter Agent",
+           instructions="Help users find pet sitters...",
+           tools=[
+               {"type": "function", "function": check_availability_function}
+           ]
+       )
+       return agent
+   ```
+
+2. **Sync Dependencies** if adding packages:
+   ```bash
+   cd sitter-agent
+   uv add <package-name>
+   uv sync
+   ```
+
+3. **Test Standalone** (optional):
+   ```bash
+   cd sitter-agent
+   uv run python pet_sitter_agent.py
+   # Interactive CLI for testing
+   ```
+
+4. **Restart via Aspire**: Stop `aspire run` (Ctrl+C) and restart - agent changes reload
+
+### Synchronizing Mock Data
+
+**CRITICAL**: Mock data must be synchronized across three locations.
+
+1. **Update Source JSON** in `/data/pet-sitter.json`:
+   ```json
+   [
+       {
+           "id": 1,
+           "email": "sitter1@example.com",
+           "name": "John Smith",
+           "city": "New York",
+           ...
+       }
+   ]
+   ```
+
+2. **Update Frontend** in `frontend/src/data/petSitterData.ts`:
+   ```typescript
+   export interface PetSitter {
+       id: number;
+       email: string;
+       name: string;
+       city: string;
+       // ... match JSON structure
+   }
+   
+   export const mockPetSitters: PetSitter[] = [
+       {
+           id: 1,
+           email: "sitter1@example.com",
+           name: "John Smith",
+           city: "New York",
+           ...
+       }
+   ];
+   ```
+
+3. **Update Backend Seed** in `backend/Data/AppDbContext.cs`:
+   ```csharp
+   modelBuilder.Entity<PetSitter>().HasData(
+       new PetSitter { Id = 1, Email = "sitter1@example.com", Name = "John Smith", City = "New York", ... }
+   );
+   ```
+
+4. **Validation**: Run validation script:
+   ```bash
+   .specify/scripts/validate-mock-data.sh
+   ```
+
+---
+
+## Testing
+
+### Backend API Testing
+
+1. **Scalar UI** (automatically available in development):
+   - Navigate to `http://localhost:<backend-port>/scalar/v1`
+   - Find backend port in Aspire Dashboard
+   - Interactive API documentation with "Try it" buttons
+
+2. **Manual HTTP Requests**:
+   ```bash
+   # Get pet owner
+   curl http://localhost:<backend-port>/api/pet-owners/1
+   
+   # Create booking
+   curl -X POST http://localhost:<backend-port>/api/bookings \
+     -H "Content-Type: application/json" \
+     -d '{"petOwnerId":1,"petSitterId":2,"serviceId":1,...}'
+   ```
+
+### Frontend Testing
+
+1. **Browser**: Open frontend URL from Aspire Dashboard (typically `http://localhost:5173`)
+
+2. **Playwright E2E Tests**:
+   ```bash
+   cd frontend
+   npm run test:e2e
+   ```
+
+3. **Mock Data Mode**: Toggle in `frontend/src/config/appConfig.ts`:
+   ```typescript
+   export const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCK_DATA === 'true';
+   ```
+
+### Agent Testing
+
+1. **View Agent Logs** in Aspire Dashboard:
+   - Click on agent service name
+   - "Logs" tab shows all agent activity
+   - Look for "Run Steps" output (tool invocations)
+
+2. **Standalone CLI Testing**:
+   ```bash
+   cd orchestrator-agent
+   uv run python orchestrator.py
+   # Type queries interactively
+   ```
+
+3. **Agent Endpoint Testing**:
+   ```bash
+   # Send message to orchestrator
+   curl -X POST http://localhost:8003/agent/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message":"Find me a dog sitter in Seattle"}'
+   ```
+
+---
+
+## Common Issues & Solutions
+
+### Issue: "DefaultAzureCredential authentication failed"
+
+**Solution**: Run `az login` before starting Aspire:
+```bash
+az login
+aspire run
+```
+
+### Issue: "uv not found" in Python agents
+
+**Solution**: Install uv:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.zshrc  # or restart terminal
+```
+
+### Issue: Agent not using tools (empty "Run Steps")
+
+**Solution**: Verify `tool_resources` passed to thread creation (see `AGENT_FRAMEWORK_FEEDBACK.md`):
+```python
+thread = client.agents.create_thread(
+    tool_resources={
+        "file_search": {
+            "vector_store_ids": [vector_store_id]
+        }
     }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DefaultConnection": "DataSource=:memory:"
-  },
-  "Authentication": {
-    "Authority": "https://your-auth-provider.com",
-    "Audience": "octopets-api"
-  },
-  "Azure": {
-    "OpenAI": {
-      "Endpoint": "https://your-openai-endpoint.openai.azure.com/",
-      "ApiKey": "your-api-key"
-    },
-    "Storage": {
-      "ConnectionString": "your-storage-connection-string"
-    }
-  },
-  "Features": {
-    "EnableCRUD": true,
-    "UseInMemoryDatabase": true,
-    "EnableMockData": true
-  }
-}
+)
 ```
 
-### 2. Frontend Dockerfile (auto-generated by Aspire)
-```dockerfile
-FROM node:18-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
+### Issue: Frontend shows 404 for API calls
 
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+**Solution**: Check `FRONTEND_URL` env var in backend (set by AppHost). Verify CORS configuration in `backend/Program.cs`:
+```csharp
+app.UseCors(policy => policy
+    .WithOrigins(frontendUrl)
+    .AllowAnyHeader()
+    .AllowAnyMethod());
 ```
 
-### 3. Python Agent Dockerfile (auto-generated by Aspire)
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY pyproject.toml ./
-RUN pip install uv && uv sync
-COPY . .
-EXPOSE 8001
-CMD ["uv", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
+### Issue: Mock data out of sync
+
+**Solution**: Run validation script:
+```bash
+.specify/scripts/validate-mock-data.sh
 ```
+
+Compare data structures across:
+- `/data/*.json`
+- `frontend/src/data/*Data.ts`
+- `backend/Data/AppDbContext.cs` seed data
 
 ---
 
-## Testing Strategy
+## Development Best Practices
 
-### 1. Backend Testing
+### Constitution Compliance
+
+✅ **Always** use Aspire orchestration (no standalone service execution)  
+✅ **Never** hardcode URLs or ports (use service discovery)  
+✅ **Always** synchronize mock data across all three locations  
+✅ **Always** use `uv sync` for Python dependencies (never `pip install` directly)  
+✅ **Always** invoke Azure MCP best practices tools before Azure-related code generation  
+✅ **Always** invoke Azure AI Toolkit tools before agent code generation  
+
+### Code Conventions
+
+- **Backend Endpoints**: Use `.WithName()`, `.WithDescription()`, `.WithOpenApi()` on all routes
+- **Repository Pattern**: Inject `I<Entity>Repository` in endpoint methods
+- **EF Core**: Use async methods (`FindAsync`, `SaveChangesAsync`, etc.)
+- **Frontend**: Use TypeScript interfaces matching backend C# models
+- **Agents**: Use `ChatAgent` from Microsoft Agent Framework, not custom implementations
+
+### Git Workflow
+
 ```bash
-cd src/Backend
+# Feature branch already exists
+git checkout 001-pet-sitter-marketplace
 
-# Add test project
-dotnet new xunit -n Backend.Tests
-dotnet add Backend.Tests reference Backend/Backend.csproj
-dotnet add Backend.Tests package Microsoft.AspNetCore.Mvc.Testing
+# Make changes
+git add .
+git commit -m "feat: add PetOwner entity and endpoints"
 
-# Run tests
-dotnet test
-```
-
-### 2. Frontend Testing
-```bash
-cd src/Frontend
-
-# Unit tests
-npm test
-
-# E2E tests with Playwright
-npx playwright install
-npm run test:e2e
-```
-
-### 3. Agent Testing
-```bash
-cd src/Agents/ListingsAgent
-
-# Add test dependencies
-uv add --dev pytest pytest-asyncio httpx
-
-# Create test file
-touch test_agent.py
-
-# Run tests
-uv run pytest
-```
-
----
-
-## Deployment
-
-### 1. Azure Deployment with Aspire
-```bash
-# Install Azure Developer CLI
-winget install microsoft.azd
-
-# Initialize for deployment
-azd init
-
-# Provision and deploy
-azd up
-```
-
-### 2. Docker Deployment
-```bash
-# Build all services
-aspire publish --output-path ./artifacts
-
-# Deploy to container registry
-docker compose -f ./artifacts/docker-compose.yml up -d
+# Push regularly
+git push origin 001-pet-sitter-marketplace
 ```
 
 ---
 
 ## Next Steps
 
-1. **Complete Implementation**: Follow the detailed API contracts in `/contracts/` directory
-2. **Database Setup**: Replace in-memory database with PostgreSQL/SQL Server for production
-3. **Authentication**: Implement full OAuth 2.0/OpenID Connect authentication
-4. **AI Features**: Configure Azure AI Foundry agents with vector search capabilities
-5. **Monitoring**: Set up Application Insights and logging
-6. **CI/CD**: Implement GitHub Actions or Azure DevOps pipelines
+After quickstart setup:
 
-## Additional Resources
-
-- [.NET Aspire Documentation](https://learn.microsoft.com/en-us/dotnet/aspire/)
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-studio/)
-- [React TypeScript Documentation](https://react.dev/learn/typescript)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+1. **Review Data Model**: Read `specs/001-pet-sitter-marketplace/data-model.md`
+2. **Review API Contracts**: Read `specs/001-pet-sitter-marketplace/contracts/*.yaml`
+3. **Implement P1 User Stories**: Follow task breakdown in `specs/001-pet-sitter-marketplace/tasks.md` (generated by `/speckit.tasks`)
+4. **Test Incrementally**: Use Aspire Dashboard logs and Scalar UI for validation
 
 ---
 
-## Troubleshooting
+## Resources
 
-### Common Issues
+- **Aspire Documentation**: https://learn.microsoft.com/dotnet/aspire
+- **Microsoft Agent Framework**: https://github.com/microsoft/agent-framework
+- **EF Core**: https://learn.microsoft.com/ef/core
+- **React Router v6**: https://reactrouter.com
+- **Octopets Constitution**: `.specify/memory/constitution.md`
+- **Architecture Guide**: `.github/copilot-instructions.md`
+- **Multi-Agent Patterns**: `docs/multi-agent-orchestration.md`
 
-1. **Python agent authentication**: Ensure `az login` is completed
-2. **Frontend CORS**: Check `FRONTEND_URL` environment variable in backend
-3. **Port conflicts**: Verify ports 3000, 7001, 8001-8003 are available
-4. **Azure AI access**: Confirm Azure OpenAI service is properly configured
-5. **Missing dependencies**: Run `uv sync` in each Python project
+---
 
-### Debug Commands
-```bash
-# Check Aspire service status
-aspire ps
-
-# View service logs
-aspire logs <service-name>
-
-# Check environment variables
-aspire env
-
-# Health checks
-curl http://localhost:8001/health
-```
+**Phase 1 Complete**: Development environment ready, data model defined, contracts generated.  
+**Next Phase**: Use `/speckit.tasks` to generate implementation task breakdown from user stories.

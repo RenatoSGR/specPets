@@ -1,0 +1,31 @@
+.messages-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.messages-container {
+  display: flex;
+  gap: 2rem;
+  min-height: 600px;
+}
+
+.messages-sidebar {
+  flex: 0 0 300px;
+}
+
+.messages-main {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}

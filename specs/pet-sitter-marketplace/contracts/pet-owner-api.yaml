@@ -1,0 +1,381 @@
+openapi: 3.0.3
+info:
+  title: Pet Owner API
+  description: API endpoints for pet owner profile management and dashboard
+  version: 1.0.0
+  contact:
+    name: Octopets Team
+
+servers:
+  - url: /api
+    description: Backend API (relative path, Aspire service discovery)
+
+tags:
+  - name: PetOwners
+    description: Pet owner profile operations
+  - name: Pets
+    description: Pet management operations
+
+paths:
+  /pet-owners:
+    post:
+      tags:
+        - PetOwners
+      summary: Create new pet owner profile
+      operationId: createPetOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetOwnerRequest'
+      responses:
+        '201':
+          description: Pet owner created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetOwner'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /pet-owners/{id}:
+    get:
+      tags:
+        - PetOwners
+      summary: Get pet owner profile by ID
+      operationId: getPetOwner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pet owner profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetOwner'
+        '404':
+          description: Pet owner not found
+    
+    put:
+      tags:
+        - PetOwners
+      summary: Update pet owner profile
+      operationId: updatePetOwner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePetOwnerRequest'
+      responses:
+        '200':
+          description: Pet owner updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetOwner'
+        '404':
+          description: Pet owner not found
+        '400':
+          description: Invalid request data
+
+  /pet-owners/{id}/pets:
+    get:
+      tags:
+        - Pets
+      summary: Get all pets for owner
+      operationId: getOwnerPets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Pet owner ID
+      responses:
+        '200':
+          description: List of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet owner not found
+
+  /pets:
+    post:
+      tags:
+        - Pets
+      summary: Add new pet
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetRequest'
+      responses:
+        '201':
+          description: Pet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Pet owner not found
+
+  /pets/{id}:
+    get:
+      tags:
+        - Pets
+      summary: Get pet by ID
+      operationId: getPet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pet details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet not found
+    
+    put:
+      tags:
+        - Pets
+      summary: Update pet details
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePetRequest'
+      responses:
+        '200':
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet not found
+    
+    delete:
+      tags:
+        - Pets
+      summary: Delete pet
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Pet deleted successfully
+        '404':
+          description: Pet not found
+
+components:
+  schemas:
+    PetOwner:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        pets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+
+    CreatePetOwnerRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+      required:
+        - email
+        - name
+        - zipCode
+
+    UpdatePetOwnerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+        petOwnerId:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        breed:
+          type: string
+        age:
+          type: integer
+        specialNeeds:
+          type: string
+        behavioralNotes:
+          type: string
+      required:
+        - id
+        - petOwnerId
+        - name
+        - type
+
+    CreatePetRequest:
+      type: object
+      properties:
+        petOwnerId:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        type:
+          type: string
+        breed:
+          type: string
+        age:
+          type: integer
+          minimum: 0
+          maximum: 50
+        specialNeeds:
+          type: string
+          maxLength: 500
+        behavioralNotes:
+          type: string
+          maxLength: 1000
+      required:
+        - petOwnerId
+        - name
+        - type
+
+    UpdatePetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        type:
+          type: string
+        breed:
+          type: string
+        age:
+          type: integer
+          minimum: 0
+          maximum: 50
+        specialNeeds:
+          type: string
+          maxLength: 500
+        behavioralNotes:
+          type: string
+          maxLength: 1000
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string

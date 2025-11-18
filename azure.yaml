@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: octopets
+metadata:
+  template: octopets-marketplace@0.0.1-beta
+
+services:
+  backend:
+    project: ./backend
+    language: csharp
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: ./backend
+
+  frontend:
+    project: ./frontend
+    language: js
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: ./frontend
+
+  sitter-agent:
+    project: ./sitter-agent
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: ./sitter-agent
+
+  orchestrator-agent:
+    project: ./orchestrator-agent
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: ./orchestrator-agent
+
+  booking-agent:
+    project: ./booking-agent
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: ./booking-agent

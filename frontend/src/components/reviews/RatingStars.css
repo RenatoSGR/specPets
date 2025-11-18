@@ -1,0 +1,70 @@
+.rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-stars.small {
+  font-size: 14px;
+}
+
+.rating-stars.small .star svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rating-stars.medium {
+  font-size: 16px;
+}
+
+.rating-stars.medium .star svg {
+  width: 24px;
+  height: 24px;
+}
+
+.rating-stars.large {
+  font-size: 20px;
+}
+
+.rating-stars.large .star svg {
+  width: 32px;
+  height: 32px;
+}
+
+.rating-stars .star {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #fbbf24;
+  transition: all 0.2s ease;
+}
+
+.rating-stars.readonly .star {
+  cursor: default;
+}
+
+.rating-stars.interactive .star:hover {
+  transform: scale(1.1);
+}
+
+.rating-stars .star.filled {
+  color: #fbbf24;
+}
+
+.rating-stars .star.empty {
+  color: #d1d5db;
+}
+
+.rating-stars .star:focus-visible {
+  outline: 2px solid #ec4899;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.rating-stars .rating-value {
+  margin-left: 8px;
+  color: #6b7280;
+  font-size: 0.9em;
+  font-weight: 500;
+}

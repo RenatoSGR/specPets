@@ -1,82 +1,84 @@
-# Feature Specification: Pet Sitter Marketplace Platform
+# Feature Specification: Octopets Pet Sitter Marketplace
 
 **Feature Branch**: `001-pet-sitter-marketplace`  
-**Created**: November 12, 2025  
+**Created**: October 21, 2025  
 **Status**: Draft  
-**Input**: User description: "create a specification based on the images and also i want my app to be a copy of this https://github.com/maddymontaquila/octopets/tree/sdd"
+**Input**: User description: "Build an application called Octopets that is like an AirB&B for pet sitters and owners. Pet Owners should be able to search for pet sitters in their location and have scheduling capabilties. Pet sittters should be able to customize their profile, skills, and services offered."
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Pet Owner Search & Discovery (Priority: P1)
+### User Story 1 - Pet Owner Searches and Books Sitter (Priority: P1)
 
-Pet owners need to find and browse pet-friendly venues where they can bring their pets for various activities. This includes searching by location, pet type compatibility, and venue type (parks, cafés, hotels, etc.).
+As a pet owner, I need to find and book a qualified pet sitter in my local area for specific dates so that my pet receives proper care while I'm away.
 
-**Why this priority**: This is the foundation of the platform - without venue discovery, there's no core value proposition. Pet owners must be able to find relevant venues before any other functionality matters.
+**Why this priority**: This is the core value proposition - connecting pet owners with sitters. Without search and booking, the marketplace has no function. This story delivers immediate value and can be tested end-to-end.
 
-**Independent Test**: Can be tested by browsing the venue listings, applying filters for pet type and venue category, viewing venue details including photos and amenities, and verifying search results match the applied criteria. Delivers immediate value by helping pet owners discover new places.
-
-**Acceptance Scenarios**:
-
-1. **Given** a pet owner wants to find dog-friendly cafés, **When** they search for "café" venues and filter by "dogs allowed", **Then** they see a list of relevant venues with photos, ratings, and key details
-2. **Given** a pet owner is viewing venue details, **When** they select a specific venue, **Then** they see comprehensive information including allowed pet types, amenities, photos, reviews, and contact information
-3. **Given** a pet owner wants venues near them, **When** they enable location services or enter their location, **Then** venues are sorted by proximity with distance indicators
-4. **Given** a pet owner has multiple pets, **When** they filter by multiple pet types, **Then** only venues that accept all selected pet types are displayed
-5. **Given** a pet owner wants to see venue photos, **When** they browse venue listings, **Then** each venue displays representative photos and allows viewing the full photo gallery
-
----
-
-### User Story 2 - Booking & Scheduling System (Priority: P2)
-
-Pet owners can request bookings with sitters for specific dates and times, and sitters can accept or decline requests. This enables the transactional aspect of the marketplace.
-
-**Why this priority**: Without booking capability, the platform is just a directory. This transforms it into a functional marketplace where transactions occur. Depends on search/discovery (P1) being in place first.
-
-**Independent Test**: Can be tested by selecting a sitter, choosing available dates from their calendar, submitting a booking request, and verifying the sitter receives the request. Delivers value by enabling actual pet care arrangements.
+**Independent Test**: Can be fully tested by creating a pet owner account, searching by location and dates, viewing sitter profiles, and completing a booking request. Delivers the fundamental marketplace value of connecting supply and demand.
 
 **Acceptance Scenarios**:
 
-1. **Given** a pet owner is viewing a sitter's profile, **When** they select available dates on the calendar and click "Request Booking", **Then** a booking request is created with selected dates, pet details, and service type
-2. **Given** a sitter has received a booking request, **When** they view their dashboard, **Then** they see pending requests with pet owner details and can accept or decline
-3. **Given** a sitter accepts a booking, **When** acceptance is processed, **Then** both parties receive confirmation with booking details and the sitter's calendar blocks those dates
-4. **Given** a book conflict exists, **When** an owner tries to book already-reserved dates, **Then** the system prevents double-booking and shows alternative available dates
-5. **Given** a booking is confirmed, **When** either party needs to cancel, **Then** they can cancel with appropriate notice period (24-48 hours standard) and both parties are notified
+1. **Given** I am a logged-in pet owner, **When** I enter my zip code and desired dates, **Then** I see a list of available pet sitters in my area
+2. **Given** I am viewing search results, **When** I click on a sitter profile, **Then** I see their full profile including services, rates, availability, and reviews
+3. **Given** I am viewing a sitter's profile, **When** I select dates and request a booking, **Then** the sitter receives my booking request and I receive a confirmation that my request was sent
+4. **Given** I have submitted a booking request, **When** the sitter accepts my request, **Then** I receive a confirmation notification and the booking appears in my dashboard
+5. **Given** I am searching for sitters, **When** no sitters are available for my selected dates, **Then** I see a message indicating no availability and suggestions to expand my search criteria
 
 ---
 
-### User Story 3 - Pet Sitter Profile Management (Priority: P1)
+### User Story 2 - Pet Sitter Profile Management (Priority: P1)
 
-Pet sitters can create and customize their profiles with services, skills, experience, availability, and rates. This enables sitters to market themselves effectively to potential clients.
+As a pet sitter, I need to create and maintain a comprehensive profile showcasing my skills, services, and availability so that pet owners can evaluate if I'm the right fit for their needs.
 
-**Why this priority**: Sitters need complete profiles before owners can make informed decisions. This is a prerequisite for meaningful search results. Equal priority to search since you need both supply (sitters) and demand (owners) for a marketplace.
+**Why this priority**: Without sitter profiles, pet owners cannot make informed decisions. This is equally critical to search functionality - supply must exist for the marketplace to function. This can be developed and tested independently of the booking flow.
 
-**Independent Test**: Can be tested by a sitter creating an account, filling out profile sections (bio, services, rates, photos), setting availability calendar, and previewing how their profile appears to owners. Delivers value by allowing sitters to establish their presence on the platform.
+**Independent Test**: Can be fully tested by creating a sitter account and configuring all profile elements (bio, services, rates, availability, photos). Delivers value by allowing sitters to establish their presence and pet owners to view detailed information.
 
 **Acceptance Scenarios**:
 
-1. **Given** a new pet sitter creates an account, **When** they access profile setup, **Then** they see form sections for bio, experience, certifications, services offered, pet types accepted, and rate structure
-2. **Given** a sitter is editing their profile, **When** they upload photos and videos, **Then** media is stored and displayed on their profile with a maximum of 10 images
-3. **Given** a sitter wants to set their rates, **When** they configure pricing, **Then** they can set different rates per service type (overnight, daily visits, dog walking) and per pet type
-4. **Given** a sitter updates their availability calendar, **When** they mark dates as available or blocked, **Then** these dates are reflected in real-time for pet owners viewing their profile
-5. **Given** a sitter has special skills or certifications, **When** they add these to their profile (e.g., "Pet First Aid Certified", "Experience with Senior Dogs"), **Then** these appear as searchable tags and badges on their profile
+1. **Given** I am a new pet sitter, **When** I complete the registration process, **Then** I am guided to create my profile with required information
+2. **Given** I am editing my profile, **When** I add or update my services (dog walking, overnight stays, medication administration, etc.), **Then** these services are saved and displayed on my public profile
+3. **Given** I am editing my profile, **When** I set my hourly rates or service-specific pricing, **Then** pet owners can see my pricing when viewing my profile
+4. **Given** I am managing my profile, **When** I upload photos of myself or my home, **Then** these photos appear on my public profile
+5. **Given** I am setting up my profile, **When** I specify my skills (breeds experienced with, special needs care, training certifications), **Then** these qualifications are visible to pet owners and can be used in search filters
+6. **Given** I am managing availability, **When** I mark dates as unavailable, **Then** I do not appear in search results for those dates
 
 ---
 
-### User Story 4 - Review & Rating System (Priority: P3)
+### User Story 3 - Booking Management and Communication (Priority: P2)
 
-Pet owners and sitters can leave reviews and ratings for each other after completed bookings, building trust and reputation within the marketplace.
+As a pet owner or pet sitter, I need to manage my bookings and communicate with the other party so that we can coordinate pet care details and handle any changes.
 
-**Why this priority**: While important for long-term platform health, reviews are only meaningful after bookings occur. This depends on P1 and P2 being functional first.
+**Why this priority**: While essential for a complete experience, basic search and profile creation provide minimum viable value. This story enhances the experience but requires the foundational P1 stories to be in place.
 
-**Independent Test**: Can be tested by completing a mock booking, then having both parties leave reviews with ratings and written feedback, and verifying reviews appear on profiles and influence search rankings.
+**Independent Test**: Can be tested by simulating booking creation, acceptance/decline flows, messaging between parties, and status updates. Delivers value by enabling coordination and communication.
 
 **Acceptance Scenarios**:
 
-1. **Given** a booking has been completed, **When** both parties access the review system, **Then** they can rate each other (1-5 stars) and leave written feedback
-2. **Given** reviews have been submitted, **When** users view sitter or owner profiles, **Then** they see average ratings and recent review highlights
-3. **Given** multiple reviews exist, **When** potential clients browse sitters, **Then** sitters are ranked considering both rating scores and review recency
-4. **Given** inappropriate content is reported, **When** reviews are flagged, **Then** the platform can moderate and remove problematic reviews
+1. **Given** I am a pet sitter with pending booking requests, **When** I view my dashboard, **Then** I see all pending requests with pet owner details and requested dates
+2. **Given** I am a pet sitter reviewing a booking request, **When** I accept or decline the request, **Then** the pet owner is notified of my decision
+3. **Given** I have an active booking, **When** I send a message to the other party, **Then** they receive the message and can reply
+4. **Given** I need to cancel a booking, **When** I initiate cancellation with a reason, **Then** the other party is notified and the cancellation policy is applied
+5. **Given** I am a pet owner with an upcoming booking, **When** I view booking details, **Then** I see the sitter's contact information, service details, dates, and total cost
 
 ---
+
+### User Story 4 - Reviews and Ratings (Priority: P3)
+
+As a pet owner, I need to read reviews from other pet owners and leave reviews after my booking so that I can make informed decisions and help build trust in the community.
+
+**Why this priority**: Reviews build trust and credibility but are not essential for the initial marketplace launch. The marketplace can function without reviews initially, though they significantly enhance quality over time.
+
+**Independent Test**: Can be tested by completing bookings, submitting reviews, viewing aggregate ratings on profiles, and filtering search results by rating. Delivers value by providing social proof and quality signals.
+
+**Acceptance Scenarios**:
+
+1. **Given** I have completed a booking, **When** I access my booking history, **Then** I see an option to leave a review for that sitter
+2. **Given** I am leaving a review, **When** I submit a rating (1-5 stars) and written feedback, **Then** the review appears on the sitter's profile after moderation
+3. **Given** I am viewing a sitter's profile, **When** I scroll to the reviews section, **Then** I see their average rating, number of reviews, and individual review details
+4. **Given** I am searching for sitters, **When** I apply a minimum rating filter, **Then** only sitters meeting that rating threshold appear in results
+
+---
+
 ### User Story 5 - Search Filters and Advanced Matching (Priority: P3)
 
 As a pet owner, I need to filter search results by specific criteria (pet type, services offered, special skills, price range) so that I can quickly find sitters who meet my specific needs.
@@ -109,20 +111,22 @@ As a pet owner, I need to securely pay for pet sitting services through the plat
 
 ### Edge Cases
 
-- What happens when a sitter becomes unavailable after accepting a booking (emergency, illness)?
-- How does the system handle timezone differences for booking requests?
-- What occurs when pet owners have special needs pets requiring specific experience?
-- How are payment disputes resolved between owners and sitters?
-- What happens when a sitter's rates change between booking request and acceptance?
-- How does the system handle no-show scenarios for either party?
-- What occurs when pets have behavioral issues during a booking?
+- What happens when a pet owner searches in a location with no registered sitters?
+- How does the system handle double-booking scenarios where a sitter accepts multiple requests for overlapping dates?
 - What happens when a sitter wants to cancel an accepted booking close to the start date?
+- How does the system handle time zone differences when showing availability?
+- What happens if a pet owner doesn't specify the type of pet they need sitting for?
+- How does the system handle partial availability (sitter available for some but not all requested dates)?
 - What happens when a user tries to book dates in the past?
+- How does the system handle sitters who want to offer services for multiple pet types with different rates?
+- How does the system handle cases where a sitter has insufficient profile information (missing photos, empty bio)?
 - How do pet owners and sitters coordinate payment terms without integrated payment processing?
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
+
+**Pet Owner Requirements:**
 
 - **FR-001**: System MUST allow pet owners to create accounts with email verification
 - **FR-002**: System MUST allow pet owners to search for pet sitters by entering a location (zip code, city, or address)
@@ -192,7 +196,7 @@ As a pet owner, I need to securely pay for pet sitting services through the plat
 - **FR-047**: System MUST not share contact information until booking is confirmed
 - **FR-048**: System MUST comply with data retention policies for user information
 
-### Key Entities *(include if feature involves data)*
+### Key Entities
 
 - **Pet Owner**: Individual seeking pet sitting services; has profile with contact information, pet details, booking history, and reviews written
 - **Pet Sitter**: Individual offering pet sitting services; has detailed profile with services, rates, availability calendar, skills, photos, reviews received, and booking schedule
@@ -209,21 +213,21 @@ As a pet owner, I need to securely pay for pet sitting services through the plat
 
 ### Measurable Outcomes
 
-- **SC-001**: Pet owners can find relevant venues within 30 seconds using search and filter functionality
-- **SC-002**: Sitters can complete their profile setup in under 10 minutes with all essential information
-- **SC-003**: 90% of booking requests receive responses (accept/decline) within 24 hours
-- **SC-004**: Users can complete the booking request process in under 3 minutes from sitter selection
-- **SC-005**: Platform supports 1,000 concurrent users during peak usage without performance degradation
-- **SC-006**: 95% of search results return within 2 seconds for venue and sitter queries
-- **SC-007**: Review submission and display process completes in under 60 seconds
-- **SC-008**: System maintains 99.5% uptime for critical booking and communication functions
-- **SC-009**: User registration and email verification process completes in under 5 minutes
-- **SC-010**: Mobile responsive design works seamlessly across devices with screen sizes 320px and larger
+- **SC-001**: Pet owners can complete a search and view at least 3 sitter profiles within 2 minutes of landing on the search page
+- **SC-002**: Pet sitters can create a complete profile (including all required fields and at least 2 photos) within 10 minutes
+- **SC-003**: Pet owners can submit a booking request within 5 minutes of finding a suitable sitter
+- **SC-004**: 90% of booking requests receive a response (accept or decline) from sitters within 24 hours
+- **SC-005**: Search results are geographically accurate, showing only sitters within the specified radius
+- **SC-006**: System displays search results in under 3 seconds for typical queries
+- **SC-007**: 85% of pet owners who submit booking requests complete a confirmed booking
+- **SC-008**: Messaging between parties delivers notifications within 1 minute of sending
+- **SC-009**: 80% of completed bookings result in a submitted review
+- **SC-010**: Average sitter profile completeness is at least 90% (all recommended fields filled)
 - **SC-011**: Pet owners can filter and refine search results with zero errors in matching criteria
 - **SC-012**: System handles 500 concurrent users during peak hours without performance degradation
 - **SC-013**: 95% of users report satisfaction with search relevance and matching quality
 
-# Assumptions
+## Assumptions
 
 - Pet owners are responsible for verifying sitter qualifications and conducting any background checks they deem necessary
 - Initial launch will focus on individual pet sitters rather than commercial pet care businesses
@@ -237,3 +241,4 @@ As a pet owner, I need to securely pay for pet sitting services through the plat
 - Time zones are handled based on the sitter's location for all booking times
 - Minimum viable profile requires: bio (at least 50 characters), at least one photo, at least one service defined, and pricing information
 - Platform is accessible via both web browsers and mobile web initially, with native mobile apps as a future enhancement
+

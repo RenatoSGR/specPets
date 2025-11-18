@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "ownerId": 1,
+    "sitterId": 1,
+    "bookingId": 1,
+    "rating": 5,
+    "comment": "Emily was fantastic! My dog Max loved her and she sent daily photo updates. Highly recommend for anyone looking for a reliable pet sitter!",
+    "createdAt": "2024-03-01T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "ownerId": 2,
+    "sitterId": 2,
+    "bookingId": 2,
+    "rating": 5,
+    "comment": "Mike is a true professional. His training techniques worked wonders with my dog. We've seen huge improvements in behavior!",
+    "createdAt": "2024-03-05T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "ownerId": 2,
+    "sitterId": 1,
+    "bookingId": 3,
+    "rating": 4,
+    "comment": "Great experience overall. Emily was reliable and my cats were well cared for. Would definitely book again!",
+    "createdAt": "2024-03-10T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "ownerId": 1,
+    "sitterId": 3,
+    "bookingId": 4,
+    "rating": 5,
+    "comment": "Jessica is amazing with cats! She really understands their needs and my two cats were so happy when I got home.",
+    "createdAt": "2024-03-12T14:30:00Z"
+  },
+  {
+    "id": 5,
+    "ownerId": 3,
+    "sitterId": 1,
+    "bookingId": 5,
+    "rating": 5,
+    "comment": "Emily went above and beyond during our vacation. She even watered our plants! Such a caring and thoughtful sitter.",
+    "createdAt": "2024-03-15T09:15:00Z"
+  },
+  {
+    "id": 6,
+    "ownerId": 1,
+    "sitterId": 2,
+    "bookingId": 6,
+    "rating": 4,
+    "comment": "Mike was great with our energetic dog. The training tips he shared were really helpful. Only minor issue was a slight delay one day.",
+    "createdAt": "2024-03-18T16:45:00Z"
+  },
+  {
+    "id": 7,
+    "ownerId": 3,
+    "sitterId": 3,
+    "bookingId": 7,
+    "rating": 5,
+    "comment": "Jessica took wonderful care of our rabbit and bird. She clearly has experience with different types of pets. 10/10 would book again!",
+    "createdAt": "2024-03-20T11:00:00Z"
+  },
+  {
+    "id": 8,
+    "ownerId": 2,
+    "sitterId": 1,
+    "bookingId": 8,
+    "rating": 5,
+    "comment": "Third time booking with Emily and she never disappoints! My dog gets so excited when she arrives. Thank you Emily!",
+    "createdAt": "2024-03-22T13:20:00Z"
+  }
+]

@@ -1,609 +1,501 @@
-# Research: Pet Sitter Marketplace Platform
+# Research: Pet Sitter Marketplace
 
-**Date**: November 12, 2025  
-**Feature**: 001-pet-sitter-marketplace  
-**Research Scope**: Technical architecture decisions and implementation patterns
+**Feature**: Pet Sitter Marketplace  
+**Phase**: 0 - Research & Unknowns Resolution  
+**Date**: October 21, 2025
 
----
+## Overview
 
-## Executive Summary
-
-This research consolidates technical decisions for implementing a comprehensive pet sitter marketplace platform using .NET Aspire orchestration, multi-agent AI coordination, and modern web technologies. All decisions align with the Octopets constitution and leverage existing architectural patterns while extending functionality for marketplace operations.
+This document resolves unknowns identified in Technical Context and Constitution Check sections of plan.md. Research focuses on: (1) AI model selection for sitter matching, (2) entity structure for marketplace domain models, (3) integration patterns with existing Octopets architecture.
 
 ---
 
-## Azure AI Agent Architecture
+## Research Tasks
 
-### Decision: Multi-Agent Specialization with HTTP Coordination
+### 1. AI Model Selection for Sitter Matching Agent
 
-**Rationale**: Implement specialized agents (sitter-search, booking-intelligence, orchestrator) following Microsoft Agent Framework patterns with FastAPI HTTP endpoints for inter-agent communication.
+**Unknown**: Which AI model(s) should be used for intelligent sitter matching and recommendations?
 
-**Architecture Pattern**:
-```python
-# Sitter Search Agent - Specialized for sitter discovery and matching
-class SitterSearchAgent:
-    def __init__(self, client: AzureAIAgentClient):
-        self.agent = ChatAgent(
-            name="sitter-search-agent",
-            instructions="Find and rank pet sitters based on location, pet type, and availability",
-            tools=[search_sitters_tool, filter_by_availability_tool, calculate_distance_tool]
-        )
-    
-    async def search_sitters(self, query: str, filters: dict) -> List[SitterMatch]:
-        # Agent Framework integration with function tools
-        pass
+**Decision**: Use **gpt-4.1-mini** from GitHub Models for development, **gpt-4.1** for production via Azure AI Foundry
 
-# Orchestrator Agent - Coordinates multi-agent workflows  
-class OrchestratorAgent:
-    def __init__(self):
-        self.sitter_agent_url = os.getenv("SITTER_SEARCH_AGENT_URL")
-        self.booking_agent_url = os.getenv("BOOKING_AGENT_URL")
-        
-    async def handle_complex_query(self, query: str) -> AgentResponse:
-        # Delegate to specialized agents and synthesize responses
-        pass
-```
-
-**Key Implementation Details**:
-- **Authentication**: `DefaultAzureCredential` for Azure AI Foundry integration
-- **Tool Configuration**: Vector stores for sitter data, function tools for booking logic
-- **Health Checks**: `/health` endpoints for Aspire monitoring
-- **Error Handling**: Structured logging with OpenTelemetry integration
+**Rationale**:
+- **gpt-4.1-mini** offers excellent balance of cost ($0.7 per 1M tokens), quality (0.8066 quality index), and throughput (125.04 tokens/sec)
+- Outperforms gpt-4o-mini in coding and instruction following, critical for function calling in Agent Framework
+- GitHub Models provides free tier for development with single endpoint (https://models.github.ai/inference/)
+- Production can seamlessly transition to Azure AI Foundry deployment of same model family
+- Multi-agent orchestration benefits from consistent model across agents
+- Long context window (1M input, 33K output) supports detailed sitter profiles and booking history
 
 **Alternatives Considered**:
-- Single monolithic agent (rejected: lacks specialization, harder to scale)
-- Direct database access from agents (rejected: violates separation of concerns)
+- **o3-mini**: Higher quality (0.8658) but significantly more expensive ($1.925/1M tokens) and reasoning-focused; overkill for recommendation tasks
+- **Phi-4-mini-instruct**: Cheaper ($0.1312/1M tokens) but lower quality (0.4429); may struggle with nuanced matching logic
+- **gpt-5-mini**: Newer but still preview; prefer stable gpt-4.1 family for production marketplace
+
+**Implementation Notes**:
+- Use Mi    figuration to switch between GitHub Models (dev) and Azure AI Foundry (prod)
+- Configure in AppHost.cs using `IsPublishMode` to select endpoint
+- Both sitter-agent and orchestrator-agent should use same model for consistency
 
 ---
 
-## Entity Framework Core Data Architecture
+### 2. Entity Structure for Marketplace Domain Models
 
-### Decision: Domain-Driven Design with Marketplace-Specific Entities
+**Unknown**: What is the detailed structure for PetOwner, PetSitter, Booking, Message, Service, and Availability entities?
 
-**Rationale**: Implement comprehensive entity model supporting bidirectional marketplace operations with EF Core 9.0 advanced features.
+**Decision**: Define entities following EF Core navigation properties pattern with appropriate relationships
 
-**Core Entities**:
+#### PetOwner Entity
+
 ```csharp
-public class PetSitter : BaseEntity
+public class PetOwner
 {
-    public string UserId { get; set; } // Identity integration
-    public string Bio { get; set; }
-    public List<Service> ServicesOffered { get; set; }
-    public List<PetType> PetTypesAccepted { get; set; }
-    public LocationCoordinates Location { get; set; } // Complex type
-    public List<Availability> AvailabilitySlots { get; set; }
-    public List<Review> ReviewsReceived { get; set; }
-    public decimal AverageRating { get; set; } // Calculated property
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
+    public string ZipCode { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    
+    // Navigation properties
+    public List<Pet> Pets { get; set; } = new();
+    public List<Booking> Bookings { get; set; } = new();
+    public List<Review> ReviewsWritten { get; set; } = new();
 }
 
-public class Booking : BaseEntity
+public class Pet
 {
-    public string PetOwnerId { get; set; }
-    public string PetSitterId { get; set; }
-    public DateTimeRange ServicePeriod { get; set; } // Complex type
-    public List<Pet> PetsInvolved { get; set; }
-    public BookingStatus Status { get; set; }
+    public int Id { get; set; }
+    public int PetOwnerId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty; // Dog, Cat, Bird, etc.
+    public string Breed { get; set; } = string.Empty;
+    public int Age { get; set; }
+    public string SpecialNeeds { get; set; } = string.Empty;
+    public string BehavioralNotes { get; set; } = string.Empty;
+    
+    // Navigation
+    public PetOwner Owner { get; set; } = null!;
+}
+```
+
+#### PetSitter Entity
+
+```csharp
+public class PetSitter
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Bio { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
+    public string ZipCode { get; set; } = string.Empty;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public decimal HourlyRate { get; set; }
+    public List<string> Photos { get; set; } = new(); // URLs
+    public List<string> PetTypesAccepted { get; set; } = new();
+    public List<string> Skills { get; set; } = new(); // Certifications, specialties
+    public DateTime CreatedAt { get; set; }
+    public int ProfileCompleteness { get; set; } // 0-100%
+    
+    // Navigation properties
+    public List<Service> Services { get; set; } = new();
+    public List<Availability> AvailabilityPeriods { get; set; } = new();
+    public List<Booking> Bookings { get; set; } = new();
+    public List<Review> ReviewsReceived { get; set; } = new();
+}
+
+public class Service
+{
+    public int Id { get; set; }
+    public int PetSitterId { get; set; }
+    public string Name { get; set; } = string.Empty; // "Overnight Stay", "Daily Visit", etc.
+    public string Description { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public string PriceUnit { get; set; } = "hour"; // hour, day, visit
+    
+    // Navigation
+    public PetSitter Sitter { get; set; } = null!;
+}
+
+public class Availability
+{
+    public int Id { get; set; }
+    public int PetSitterId { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsAvailable { get; set; } // true = available, false = blocked
+    
+    // Navigation
+    public PetSitter Sitter { get; set; } = null!;
+}
+```
+
+#### Booking Entity
+
+```csharp
+public class Booking
+{
+    public int Id { get; set; }
+    public int PetOwnerId { get; set; }
+    public int PetSitterId { get; set; }
+    public int ServiceId { get; set; }
+    public List<int> PetIds { get; set; } = new();
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
     public decimal TotalCost { get; set; }
-    public CancellationPolicy CancellationPolicy { get; set; }
-}
-```
-
-**Key Design Patterns**:
-- **Spatial Indexing**: Location-based sitter queries with PostGIS extensions
-- **Composite Keys**: Prevent double-booking with availability constraints
-- **Complex Types**: Value objects for addresses, coordinates, date ranges
-- **Enumeration Mapping**: String storage for readable database values
-
-**Database Optimization**:
-- Clustered indexes on frequently queried columns (location, availability, rating)
-- Partial indexes for active entities only
-- Query projections to minimize data transfer
-
-**Alternatives Considered**:
-- NoSQL approach (rejected: complex relationships better suited to relational model)
-- Microservice data isolation (rejected: adds complexity without clear benefit)
-
----
-
-## React Frontend Architecture
-
-### Decision: Feature-Based Architecture with Marketplace Workflows
-
-**Rationale**: Organize components around marketplace user journeys with TypeScript for type safety and agent integration.
-
-**Component Structure**:
-```typescript
-// Feature-based organization
-src/
-├── features/
-│   ├── sitter-search/
-│   │   ├── components/      # SitterCard, SearchFilters, SitterProfile
-│   │   ├── hooks/          # useSearchSitters, useFilters
-│   │   ├── services/       # sitterSearchService, agentIntegration
-│   │   └── types/          # SitterSearchTypes
-│   ├── booking/
-│   │   ├── components/     # BookingForm, AvailabilityCalendar, BookingStatus  
-│   │   ├── hooks/          # useBooking, useAvailability
-│   │   └── services/       # bookingService
-│   └── messaging/
-│       ├── components/     # MessageThread, MessageComposer
-│       ├── hooks/          # useMessages, useRealTime
-│       └── services/       # messagingService
-└── shared/
-    ├── components/         # Button, Modal, LoadingSpinner
-    ├── hooks/              # useAuth, useApi
-    ├── services/           # apiClient, agentService
-    └── types/              # SharedTypes
-```
-
-**Agent Integration Pattern**:
-```typescript
-// Agent service for AI-powered recommendations
-class AgentService {
-    async searchSittersWithAI(query: string, preferences: UserPreferences): Promise<SitterRecommendation[]> {
-        const response = await this.http.post('/orchestrator/chat', {
-            message: `Find pet sitters for: ${query}`,
-            context: preferences
-        });
-        return response.data.recommendations;
-    }
-}
-
-// React hook for agent integration
-export const useAgentSearch = () => {
-    const [recommendations, setRecommendations] = useState<SitterRecommendation[]>([]);
-    const [loading, setLoading] = useState(false);
+    public BookingStatus Status { get; set; }
+    public string StatusReason { get; set; } = string.Empty; // For cancellations
+    public DateTime CreatedAt { get; set; }
+    public DateTime? AcceptedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
+    public DateTime? CancelledAt { get; set; }
     
-    const searchWithAI = useCallback(async (query: string) => {
-        setLoading(true);
-        const results = await agentService.searchSittersWithAI(query, userPreferences);
-        setRecommendations(results);
-        setLoading(false);
-    }, [userPreferences]);
-    
-    return { recommendations, loading, searchWithAI };
-};
-```
-
-**State Management**: React Context + useReducer for complex state, React Query for server state
-**Testing Strategy**: Jest + React Testing Library for unit tests, Playwright for E2E marketplace workflows
-
-**Alternatives Considered**:
-- Redux/Zustand (rejected: React Context sufficient for marketplace complexity)
-- Next.js (rejected: existing Aspire infrastructure, SSR not required)
-
----
-
-## Mock Data Synchronization Strategy
-
-### Decision: JSON-First with Generated Types and Seed Data
-
-**Rationale**: Maintain constitutional requirement for frontend/backend mock data parity using shared JSON schemas with generated TypeScript types and C# seed data.
-
-**Synchronization Pattern**:
-```json
-// data/sitters.json (source of truth)
-{
-  "sitters": [
-    {
-      "id": "sitter-001",
-      "name": "Sarah Johnson",
-      "bio": "Experienced dog walker with 5+ years",
-      "location": {
-        "lat": 40.7128,
-        "lng": -74.0060,
-        "address": "New York, NY"
-      },
-      "petTypesAccepted": ["dog", "cat"],
-      "servicesOffered": [
-        {
-          "type": "dog-walking",
-          "rate": 25.00,
-          "duration": "30-minutes"
-        }
-      ]
-    }
-  ]
+    // Navigation properties
+    public PetOwner Owner { get; set; } = null!;
+    public PetSitter Sitter { get; set; } = null!;
+    public Service Service { get; set; } = null!;
+    public List<Message> Messages { get; set; } = new();
 }
-```
 
-**Generated Artifacts**:
-- **Frontend**: `npm run generate:types` → TypeScript interfaces
-- **Backend**: `dotnet run generate:seeddata` → C# entity seed methods
-- **Validation**: JSON schema validation in CI/CD pipeline
-
-**Mock Data Toggle**:
-```csharp
-// AppHost configuration (constitutional requirement)
-var useMockData = builder.ExecutionContext.IsPublishMode ? "false" : "true";
-backend.WithEnvironment("USE_MOCK_DATA", useMockData);
-frontend.WithEnvironment("REACT_APP_USE_MOCK_DATA", useMockData);
-```
-
-**Alternatives Considered**:
-- Manual synchronization (rejected: error-prone, violates constitution)
-- Database-first approach (rejected: breaks local development requirement)
-
----
-
-## Booking System Architecture
-
-### Decision: Event-Driven Booking with Status State Machine
-
-**Rationale**: Implement robust booking lifecycle with clear state transitions, conflict prevention, and notification patterns.
-
-**Booking State Machine**:
-```csharp
 public enum BookingStatus
 {
-    Pending,      // Initial request submitted
-    Accepted,     // Sitter accepted the booking
-    Declined,     // Sitter declined the booking
-    Confirmed,    // Payment confirmed (future)
-    InProgress,   // Service period started
-    Completed,    // Service finished
-    Cancelled     // Cancelled by either party
+    Pending,
+    Accepted,
+    Declined,
+    InProgress,
+    Completed,
+    CancelledByOwner,
+    CancelledBySitter
 }
+```
 
-public class BookingStateMachine
+#### Message Entity
+
+```csharp
+public class Message
 {
-    private static readonly Dictionary<BookingStatus, List<BookingStatus>> AllowedTransitions = new()
-    {
-        { BookingStatus.Pending, new() { BookingStatus.Accepted, BookingStatus.Declined, BookingStatus.Cancelled } },
-        { BookingStatus.Accepted, new() { BookingStatus.Confirmed, BookingStatus.Cancelled } },
-        { BookingStatus.Confirmed, new() { BookingStatus.InProgress, BookingStatus.Cancelled } },
-        // ... additional transitions
-    };
+    public int Id { get; set; }
+    public int BookingId { get; set; }
+    public int SenderId { get; set; }
+    public string SenderType { get; set; } = string.Empty; // "Owner" or "Sitter"
+    public string Content { get; set; } = string.Empty;
+    public DateTime SentAt { get; set; }
+    public bool IsRead { get; set; }
+    
+    // Navigation
+    public Booking Booking { get; set; } = null!;
 }
 ```
 
-**Conflict Prevention**:
-```sql
--- Availability constraint preventing double-booking
-CREATE UNIQUE INDEX IX_Availability_SitterDate 
-ON Availability (PetSitterId, AvailableDate) 
-WHERE IsAvailable = 1;
+#### Review Entity (Extension of Existing)
 
--- Booking overlap prevention
-CREATE INDEX IX_Booking_SitterDateRange 
-ON Bookings (PetSitterId, StartDate, EndDate) 
-WHERE Status IN ('Accepted', 'Confirmed', 'InProgress');
+```csharp
+// Extend existing Review model
+public class Review
+{
+    public int Id { get; set; }
+    public int ListingId { get; set; } // Existing - for venue reviews
+    public int? PetSitterId { get; set; } // NEW - for sitter reviews
+    public int PetOwnerId { get; set; } // NEW - reviewer
+    public int? BookingId { get; set; } // NEW - associated booking
+    public int Rating { get; set; } // 1-5 stars
+    public string Comment { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    
+    // Navigation properties
+    public Listing? Listing { get; set; } // Existing
+    public PetSitter? Sitter { get; set; } // NEW
+    public PetOwner Owner { get; set; } = null!; // NEW
+    public Booking? Booking { get; set; } // NEW
+}
 ```
 
-**Notification Architecture**:
-- **Real-time**: SignalR for booking status updates
-- **Email**: Background service for status change notifications
-- **In-App**: Message system for booking-related communication
+**Rationale**:
+- Follows existing Octopets entity patterns (navigation properties, EF Core conventions)
+- Separates concerns: Pet data distinct from owner, services distinct from sitter
+- Supports all functional requirements from spec
+- Enables efficient querying for search (indexed location fields) and calendar (availability entities)
+- Review entity extended to support both venue and sitter reviews with nullable foreign keys
 
-**Alternatives Considered**:
-- Simple boolean status (rejected: insufficient for marketplace complexity)
-- External payment processing (deferred: phase 2 requirement)
+**Implementation Notes**:
+- Add entities to `backend/Models/` directory
+- Register in `AppDbContext.cs` DbSet properties
+- Create repositories following existing `IListingRepository` pattern
+- Seed mock data in `AppDbContext.cs` SeedData method matching `/data/*.json` structure
 
 ---
 
-## Multi-Pet Type Support Strategy
+### 3. Mock Data Synchronization Pattern
 
-### Decision: Flexible Pet Type System with Service Compatibility Matrix
+**Unknown**: How should mock data be synchronized across `/data`, frontend, and backend?
 
-**Rationale**: Support comprehensive pet types beyond dogs/cats with dynamic service-pet compatibility matching.
+**Decision**: Use `/data` JSON files as single source of truth, convert to TypeScript interfaces and C# seed data
 
-**Pet Type Architecture**:
-```typescript
-interface PetType {
-    id: string;
-    name: string;
-    category: 'mammal' | 'bird' | 'reptile' | 'fish' | 'exotic';
-    specialRequirements: SpecialRequirement[];
-    compatibleServices: ServiceType[];
-}
+**Pattern**:
 
-interface ServiceCompatibility {
-    serviceType: string;
-    petTypes: string[];
-    requiresSpecialSkills: boolean;
-    additionalRequirements?: string[];
-}
-```
+1. **Source of Truth**: Create JSON files in `/data` directory:
+   - `data/pet-owner.json` - Array of pet owner objects with nested pets
+   - `data/pet-sitter.json` - Array of sitter objects with services and availability
+   - `data/booking.json` - Array of booking objects with references to owners/sitters
 
-**Service Matching Algorithm**:
-```csharp
-public class PetServiceMatcher
-{
-    public async Task<List<PetSitter>> FindCompatibleSitters(
-        List<Pet> pets, 
-        ServiceType serviceType, 
-        Location location)
-    {
-        return await _context.PetSitters
-            .Where(s => s.Location.IsWithinRadius(location, 25))
-            .Where(s => pets.All(pet => 
-                s.PetTypesAccepted.Any(accepted => accepted.IsCompatibleWith(pet.Type)) &&
-                s.ServicesOffered.Any(service => service.IsCompatibleWith(pet.Type))))
-            .OrderBy(s => s.Location.DistanceFrom(location))
-            .ToListAsync();
-    }
-}
-```
+2. **Frontend Sync**: Convert JSON to TypeScript interfaces in `frontend/src/data/`:
+   ```typescript
+   // petSitterData.ts
+   export interface PetSitter {
+     id: number;
+     email: string;
+     name: string;
+     // ... match JSON structure exactly
+   }
+   
+   export const mockPetSitters: PetSitter[] = require('../../../data/pet-sitter.json');
+   ```
 
-**Sitter Profile Configuration**:
-- **Pet Type Selection**: Multi-select with category grouping
-- **Service-Pet Matrix**: Dynamic compatibility grid in sitter onboarding
-- **Skill Requirements**: Special certifications for exotic pet care
+3. **Backend Sync**: Add seed data to `AppDbContext.cs`:
+   ```csharp
+   protected override void OnModelCreating(ModelBuilder modelBuilder)
+   {
+       // Read from /data JSON files during development
+       var sitterJson = File.ReadAllText("../data/pet-sitter.json");
+       var sitters = JsonSerializer.Deserialize<List<PetSitter>>(sitterJson);
+       modelBuilder.Entity<PetSitter>().HasData(sitters);
+   }
+   ```
 
-**Alternatives Considered**:
-- Fixed dog/cat only (rejected: limits market differentiation)
-- Unlimited custom pets (rejected: complexity without structure)
+4. **Validation**: Create script `.specify/scripts/validate-mock-data.sh` to verify:
+   - JSON schema matches TypeScript interfaces
+   - Backend seed data matches JSON structure
+   - Foreign key references are valid
+   - Required fields populated
 
----
+**Rationale**:
+- Single source of truth prevents divergence
+- JSON format easy to edit and review
+- Automatic sync during build/startup
+- Validation script catches mismatches early
+- Follows existing pattern from `data/listing.json`
 
-## Performance & Scalability Considerations
-
-### Decision: Multi-Tier Caching with Geographic Partitioning
-
-**Rationale**: Implement caching strategy for high-frequency operations while maintaining real-time availability accuracy.
-
-**Caching Strategy**:
-```csharp
-public class SitterSearchService
-{
-    private readonly IMemoryCache _memoryCache;
-    private readonly IDistributedCache _distributedCache;
-    
-    public async Task<List<SitterSearchResult>> SearchSitters(SearchCriteria criteria)
-    {
-        // L1: Memory cache for frequently accessed sitter profiles (5min TTL)
-        var cacheKey = $"sitters:{criteria.GetHashCode()}";
-        
-        if (!_memoryCache.TryGetValue(cacheKey, out List<SitterSearchResult> results))
-        {
-            // L2: Redis distributed cache for search results (15min TTL)
-            results = await _distributedCache.GetOrSetAsync(cacheKey, 
-                () => _database.SearchSittersAsync(criteria), 
-                TimeSpan.FromMinutes(15));
-                
-            _memoryCache.Set(cacheKey, results, TimeSpan.FromMinutes(5));
-        }
-        
-        // Always fetch fresh availability data (cannot be cached)
-        await EnrichWithRealTimeAvailability(results, criteria.DateRange);
-        return results;
-    }
-}
-```
-
-**Database Optimization**:
-- **Read Replicas**: Search queries directed to read replicas
-- **Geographic Partitioning**: Sitter data partitioned by region
-- **Connection Pooling**: Optimized for high concurrent search load
-
-**CDN Strategy**:
-- **Static Assets**: Sitter photos, profile images via Azure CDN
-- **API Gateway**: Rate limiting and geographic routing
-
-**Alternatives Considered**:
-- Full-text search engine (deferred: start with SQL, evaluate Elasticsearch later)
-- NoSQL for search (rejected: complex relationships in SQL, hybrid approach too complex)
+**Implementation Notes**:
+- Create JSON files with 5-10 mock records each for testing
+- Include edge cases (sitters with no reviews, owners with multiple pets, overlapping bookings)
+- Toggle controlled by `REACT_APP_USE_MOCK_DATA` (frontend) and in-memory DB (backend)
+- AppHost sets mock data flag: dev=true, production=false
 
 ---
 
-## Security & Privacy Architecture
+### 4. Geographic Search Implementation
 
-### Decision: Progressive Trust with Data Protection
+**Unknown**: How should geographic distance calculation be implemented for sitter search?
 
-**Rationale**: Implement security layers that protect user privacy while enabling marketplace functionality.
+**Decision**: Use Haversine formula for distance calculation, in-memory LINQ filtering for development
 
-**Data Protection Strategy**:
+**Implementation**:
+
 ```csharp
-public class PrivacyService
+// backend/Services/GeoLocationService.cs
+public class GeoLocationService
 {
-    // Progressive disclosure - exact address only after booking confirmed
-    public SitterPublicProfile GetPublicProfile(PetSitter sitter, User requester)
+    private const double EarthRadiusMiles = 3959.0;
+    
+    public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
     {
-        return new SitterPublicProfile
-        {
-            Name = sitter.Name,
-            Bio = sitter.Bio,
-            ApproximateLocation = sitter.Location.Approximate(radius: 1.0), // 1-mile radius
-            Rating = sitter.AverageRating,
-            ReviewCount = sitter.Reviews.Count,
-            // Exact address hidden until booking confirmed
-        };
+        var dLat = ToRadians(lat2 - lat1);
+        var dLon = ToRadians(lon2 - lon1);
+        
+        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return EarthRadiusMiles * c;
     }
     
-    public SitterDetailedProfile GetDetailedProfile(PetSitter sitter, Booking confirmedBooking)
-    {
-        return new SitterDetailedProfile
-        {
-            // ... public profile data
-            ExactAddress = sitter.Location.ExactAddress, // Only after booking
-            Phone = sitter.ContactInfo.Phone,
-            AdditionalInstructions = sitter.SpecialInstructions
-        };
-    }
+    private double ToRadians(double degrees) => degrees * (Math.PI / 180);
 }
+
+// Usage in search endpoint
+var sitters = await repository.GetAllAsync();
+var results = sitters
+    .Select(s => new {
+        Sitter = s,
+        Distance = geoService.CalculateDistance(searchLat, searchLon, s.Latitude, s.Longitude)
+    })
+    .Where(x => x.Distance <= radiusMiles)
+    .OrderBy(x => x.Distance)
+    .ToList();
 ```
 
-**Authentication & Authorization**:
-- **ASP.NET Core Identity**: User management with email verification
-- **Role-Based Access**: Owner/Sitter/Admin role separation  
-- **JWT Tokens**: Stateless authentication for API and agent access
-- **Azure AD Integration**: Optional enterprise SSO for future
-
-**Data Validation**:
-- **Input Validation**: FluentValidation for all API inputs
-- **XSS Prevention**: Content Security Policy, input sanitization
-- **CSRF Protection**: Anti-forgery tokens on state-changing operations
+**Rationale**:
+- Haversine formula accurate for distances up to ~100 miles (sufficient for local search)
+- In-memory calculation acceptable for MVP scale (hundreds of sitters)
+- Future: Can optimize with spatial indexes in Azure SQL or Cosmos DB if needed
+- No external geocoding API required during development (use pre-computed lat/lon in mock data)
 
 **Alternatives Considered**:
-- OAuth-only authentication (rejected: email/password simplifies onboarding)
-- Microservice per entity (rejected: adds complexity without clear security benefit)
+- Azure Maps API: Adds external dependency, unnecessary for MVP
+- PostGIS/SQL Server spatial types: Overkill for in-memory database
+- Simple zip code radius: Less accurate, harder to maintain zip code database
 
 ---
 
-## Testing Strategy
+### 5. Booking Double-Booking Prevention
 
-### Decision: Pyramid Testing with Marketplace Workflow Focus
+**Unknown**: How should the system prevent double-booking when multiple owners request the same sitter for overlapping dates?
 
-**Rationale**: Comprehensive testing strategy emphasizing critical marketplace workflows while maintaining development velocity.
+**Decision**: Use optimistic concurrency check at booking acceptance time with availability query
 
-**Testing Pyramid**:
+**Implementation**:
+
 ```csharp
-// Unit Tests (70% of coverage)
-[Fact]
-public async Task SearchSitters_WithLocationFilter_ReturnsNearbyResults()
+// backend/Repositories/BookingRepository.cs
+public async Task<bool> AcceptBookingAsync(int bookingId)
 {
-    // Arrange
-    var mockRepository = new Mock<ISitterRepository>();
-    var service = new SitterSearchService(mockRepository.Object);
+    var booking = await GetByIdAsync(bookingId);
+    if (booking == null || booking.Status != BookingStatus.Pending)
+        return false;
     
-    // Act
-    var results = await service.SearchNearby(location: "Seattle", radiusMiles: 10);
+    // Check for conflicting accepted bookings
+    var hasConflict = await _context.Bookings
+        .AnyAsync(b => 
+            b.PetSitterId == booking.PetSitterId &&
+            b.Status == BookingStatus.Accepted &&
+            b.StartDate < booking.EndDate &&
+            b.EndDate > booking.StartDate);
     
-    // Assert
-    Assert.All(results, r => Assert.True(r.DistanceFromLocation <= 10));
+    if (hasConflict)
+    {
+        booking.Status = BookingStatus.Declined;
+        booking.StatusReason = "Dates no longer available";
+        await _context.SaveChangesAsync();
+        return false;
+    }
+    
+    booking.Status = BookingStatus.Accepted;
+    booking.AcceptedAt = DateTime.UtcNow;
+    await _context.SaveChangesAsync();
+    return true;
 }
 ```
 
-```typescript
-// Frontend Component Tests
-describe('SitterSearchForm', () => {
-    test('submits search with proper filters', async () => {
-        const mockSearchFn = jest.fn();
-        render(<SitterSearchForm onSearch={mockSearchFn} />);
-        
-        await user.type(screen.getByLabelText(/location/i), 'Seattle');
-        await user.selectOptions(screen.getByLabelText(/pet type/i), 'dog');
-        await user.click(screen.getByRole('button', { name: /search/i }));
-        
-        expect(mockSearchFn).toHaveBeenCalledWith({
-            location: 'Seattle',
-            petTypes: ['dog'],
-            radius: 25
-        });
+**Rationale**:
+- Check at acceptance time (not request time) allows sitters to review multiple requests
+- In-memory database with single instance eliminates race conditions
+- Explicit conflict check prevents double-booking logic errors
+- Declined bookings inform owners immediately why request was rejected
+
+**Future Considerations**:
+- Production: Add database-level unique constraint or transaction isolation
+- Notification: Send real-time updates to other pending requests when booking accepted
+
+---
+
+### 6. Message Threading and Notification Pattern
+
+**Unknown**: How should in-platform messaging be implemented with real-time notifications?
+
+**Decision**: REST API for message CRUD, polling for notifications (initial), SignalR for future real-time
+
+**Implementation**:
+
+```csharp
+// backend/Endpoints/MessageEndpoints.cs
+public static void MapMessageEndpoints(this WebApplication app)
+{
+    var group = app.MapGroup("/api/messages").WithTags("Messages");
+    
+    // Get messages for a booking
+    group.MapGet("/{bookingId}", async (int bookingId, IMessageRepository repo) =>
+    {
+        var messages = await repo.GetByBookingIdAsync(bookingId);
+        return Results.Ok(messages);
     });
-});
+    
+    // Send a message
+    group.MapPost("/", async (CreateMessageRequest req, IMessageRepository repo) =>
+    {
+        var message = new Message
+        {
+            BookingId = req.BookingId,
+            SenderId = req.SenderId,
+            SenderType = req.SenderType,
+            Content = req.Content,
+            SentAt = DateTime.UtcNow,
+            IsRead = false
+        };
+        
+        await repo.CreateAsync(message);
+        return Results.Created($"/api/messages/{message.Id}", message);
+    });
+    
+    // Get unread message count
+    group.MapGet("/unread/{userId}", async (int userId, string userType, IMessageRepository repo) =>
+    {
+        var count = await repo.GetUnreadCountAsync(userId, userType);
+        return Results.Ok(new { count });
+    });
+}
 ```
 
-**Integration Tests (20% of coverage)**:
-- API endpoint tests with in-memory database
-- Agent integration tests with mock responses
-- Authentication flow testing
-
-**End-to-End Tests (10% of coverage)**:
+**Frontend Polling**:
 ```typescript
-// Critical marketplace workflows
-test('complete booking workflow', async ({ page }) => {
-    await page.goto('/search');
-    await page.fill('[data-testid=location-input]', 'Seattle');
-    await page.selectOption('[data-testid=pet-type]', 'dog');
-    await page.click('[data-testid=search-button]');
+// frontend/src/hooks/useMessagePolling.ts
+export function useMessagePolling(userId: number, userType: string) {
+  const [unreadCount, setUnreadCount] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const response = await fetch(`/api/messages/unread/${userId}?userType=${userType}`);
+      const data = await response.json();
+      setUnreadCount(data.count);
+    }, 30000); // Poll every 30 seconds
     
-    await page.click('[data-testid=sitter-card]'); // First result
-    await page.click('[data-testid=request-booking]');
-    await page.fill('[data-testid=start-date]', '2025-12-01');
-    await page.fill('[data-testid=end-date]', '2025-12-03');
-    await page.click('[data-testid=submit-request]');
-    
-    await expect(page.locator('[data-testid=booking-success]')).toBeVisible();
-});
+    return () => clearInterval(interval);
+  }, [userId, userType]);
+  
+  return { unreadCount };
+}
 ```
 
-**Agent Testing Strategy**:
-```python
-# Agent unit tests with mocked Azure AI
-@pytest.mark.asyncio
-async def test_sitter_search_agent():
-    mock_client = MagicMock()
-    agent = SitterSearchAgent(mock_client)
-    
-    result = await agent.search_sitters("dog sitter in Seattle")
-    
-    assert len(result.sitters) > 0
-    assert all(s.location.city == "Seattle" for s in result.sitters)
-```
+**Rationale**:
+- REST API simple to implement and test
+- Polling sufficient for MVP (30s latency acceptable per success criteria: <1min)
+- No additional infrastructure required (SignalR adds websocket complexity)
+- Clear upgrade path: Add SignalR in future for real-time notifications without changing API contracts
 
 **Alternatives Considered**:
-- Manual testing only (rejected: marketplace complexity requires automation)
-- Full E2E coverage (rejected: slow feedback loop, maintenance overhead)
+- SignalR immediately: Adds complexity, overkill for MVP
+- Server-sent events (SSE): Not well supported in all browsers, harder to scale
+- Long polling: More complex than simple polling, marginal benefit
 
 ---
 
-## Deployment & Infrastructure
+## Research Summary
 
-### Decision: .NET Aspire with Azure Container Apps
+All unknowns identified in plan.md have been resolved:
 
-**Rationale**: Leverage existing Aspire infrastructure for seamless deployment to Azure Container Apps with minimal configuration.
+✅ **AI Model Selection**: gpt-4.1-mini (dev) / gpt-4.1 (prod) via GitHub Models → Azure AI Foundry  
+✅ **Entity Structure**: Complete C# entity definitions for all marketplace models  
+✅ **Mock Data Sync**: JSON source of truth with validation script  
+✅ **Geographic Search**: Haversine formula with in-memory LINQ filtering  
+✅ **Double-Booking Prevention**: Optimistic concurrency check at acceptance time  
+✅ **Messaging Pattern**: REST API with polling notifications, SignalR upgrade path  
 
-**Aspire Deployment Configuration**:
-```csharp
-// apphost/Program.cs additions for marketplace
-var builder = DistributedApplication.CreateBuilder(args);
+**Next Steps**: Proceed to Phase 1 (Design & Contracts) to create:
+- `data-model.md` with full entity relationship diagrams
+- OpenAPI contracts in `contracts/` directory
+- `quickstart.md` for development setup
+- Agent context updates
 
-// New marketplace agents
-var sitterSearchAgent = builder.AddPythonScript("sitter-search-agent", 
-    "../sitter-search-agent", "app.py")
-    .WithUvEnvironment()
-    .WithEnvironment("AZURE_OPENAI_ENDPOINT", builder.Configuration["AZURE_OPENAI_ENDPOINT"])
-    .PublishAsDockerFile();
-
-var bookingAgent = builder.AddPythonScript("booking-agent",
-    "../booking-agent", "app.py")
-    .WithUvEnvironment()
-    .WithReference(sitterSearchAgent)
-    .PublishAsDockerFile();
-
-// Enhanced orchestrator
-var orchestrator = builder.AddPythonScript("orchestrator-agent",
-    "../orchestrator-agent", "app.py")
-    .WithUvEnvironment()
-    .WithReference(sitterSearchAgent)
-    .WithReference(bookingAgent)
-    .PublishAsDockerFile();
-
-// Enhanced backend with marketplace features
-var backend = builder.AddProject<Projects.Backend>("backend")
-    .WithReference(orchestrator)
-    .WithEnvironment("ConnectionStrings__DefaultConnection", 
-        builder.ExecutionContext.IsPublishMode ? 
-            builder.Configuration["AZURE_SQL_CONNECTION"] : 
-            "Server=(localdb)\\mssqllocaldb;Database=OctopetsMarketplace;Trusted_Connection=true");
-```
-
-**Production Environment**:
-- **Azure Container Apps**: Auto-scaling for web traffic and agent load
-- **Azure SQL Database**: Managed database with geo-redundancy
-- **Application Insights**: Distributed tracing and performance monitoring
-- **Azure CDN**: Global content delivery for static assets
-
-**CI/CD Pipeline**:
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy Marketplace
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - run: |
-          cd apphost
-          azd deploy --environment production
-```
-
-**Alternatives Considered**:
-- Kubernetes deployment (rejected: Aspire provides simpler path to Container Apps)
-- VM-based deployment (rejected: container approach more maintainable)
-
----
-
-## Conclusion
-
-This research provides comprehensive technical decisions for implementing a production-ready pet sitter marketplace platform that extends the existing Octopets architecture. All decisions align with the constitutional requirements while addressing the specific needs of marketplace operations including multi-agent AI coordination, comprehensive pet type support, and scalable booking systems.
-
-**Next Steps**: Proceed to Phase 1 design with detailed data models, API contracts, and implementation guidance based on these research findings.
+**Architecture Compatibility**: All decisions comply with Octopets constitution:
+- Use existing patterns (minimal APIs, repository pattern, mock data sync)
+- No hardcoded URLs or ports
+- Aspire orchestration maintained
+- Multi-agent architecture compatible with enhancements
+- Mock data synchronized per requirements
