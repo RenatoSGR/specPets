@@ -88,35 +88,35 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Search Interface**
 
-- [ ] T030 [P] [US1] Create frontend/src/pages/SearchPage.tsx with location/date inputs
-- [ ] T031 [P] [US1] Create frontend/src/components/search/SearchBar.tsx component
-- [ ] T032 [P] [US1] Create frontend/src/components/search/SearchResults.tsx component with results grid
-- [ ] T033 [P] [US1] Create frontend/src/components/sitter/SitterCard.tsx component (search result card)
+- [ ] T030 [P] [US1] Create frontend/src/pages/SearchPage.tsx with location/date inputs (reference frontend-templates/main-page1.png and main-page2.png for layout)
+- [ ] T031 [P] [US1] Create frontend/src/components/search/SearchBar.tsx component (reference frontend-templates/main-page1.png for search bar design)
+- [ ] T032 [P] [US1] Create frontend/src/components/search/SearchResults.tsx component with results grid (reference frontend-templates/listings-page.png for layout)
+- [ ] T033 [P] [US1] Create frontend/src/components/sitter/SitterCard.tsx component (search result card, reference frontend-templates/listings-page.png for card design)
 - [ ] T034 [US1] Implement search form submission and API call in SearchPage.tsx using sitterService.ts
-- [ ] T035 [US1] Implement search results display with SitterCard components in SearchResults.tsx
+- [ ] T035 [US1] Implement search results display with SitterCard components in SearchResults.tsx (match layout from frontend-templates/listings-page.png)
 - [ ] T036 [US1] Add loading states and error handling to SearchPage.tsx
 
 **Frontend - Sitter Profile View**
 
-- [ ] T037 [P] [US1] Create frontend/src/pages/SitterProfilePage.tsx
-- [ ] T038 [P] [US1] Create frontend/src/components/sitter/SitterProfile.tsx component
+- [ ] T037 [P] [US1] Create frontend/src/pages/SitterProfilePage.tsx (reference frontend-templates/listings-page.png for detail page layout)
+- [ ] T038 [P] [US1] Create frontend/src/components/sitter/SitterProfile.tsx component (use frontend-templates images as design guide)
 - [ ] T039 [P] [US1] Create frontend/src/components/sitter/ServiceList.tsx component
 - [ ] T040 [US1] Implement profile data fetching in SitterProfilePage.tsx using sitterService.ts
-- [ ] T041 [US1] Display sitter details (bio, photos, services, rates, skills) in SitterProfile.tsx
+- [ ] T041 [US1] Display sitter details (bio, photos, services, rates, skills) in SitterProfile.tsx (match design patterns from frontend-templates)
 - [ ] T042 [US1] Display reviews and ratings in SitterProfile.tsx
 
 **Frontend - Booking Request**
 
-- [ ] T043 [P] [US1] Create frontend/src/components/booking/BookingForm.tsx
-- [ ] T044 [US1] Implement booking form (date selection, pet details, service selection) in BookingForm.tsx
+- [ ] T043 [P] [US1] Create frontend/src/components/booking/BookingForm.tsx (reference frontend-templates for form styling consistency)
+- [ ] T044 [US1] Implement booking form (date selection, pet details, service selection) in BookingForm.tsx (use design patterns from frontend-templates)
 - [ ] T045 [US1] Implement booking submission API call in BookingForm.tsx using bookingService.ts
 - [ ] T046 [US1] Add booking confirmation display and navigation to owner dashboard
 - [ ] T047 [US1] Add validation for date ranges and required fields in BookingForm.tsx
 
 **Frontend - Owner Dashboard (Basic)**
 
-- [ ] T048 [P] [US1] Create frontend/src/pages/OwnerDashboardPage.tsx
-- [ ] T049 [US1] Implement bookings list display (pending, accepted, completed) in OwnerDashboardPage.tsx
+- [ ] T048 [P] [US1] Create frontend/src/pages/OwnerDashboardPage.tsx (reference frontend-templates for page layout and component structure)
+- [ ] T049 [US1] Implement bookings list display (pending, accepted, completed) in OwnerDashboardPage.tsx (use card/list patterns from frontend-templates)
 - [ ] T050 [US1] Implement booking status indicators in OwnerDashboardPage.tsx
 
 **Mock Data Synchronization**
@@ -169,17 +169,17 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Profile Editing Interface**
 
-- [ ] T072 [P] [US2] Create frontend/src/pages/ProfileEditPage.tsx
-- [ ] T073 [P] [US2] Create form sections: basic info (bio, location, skills) in ProfileEditPage.tsx
-- [ ] T074 [P] [US2] Create form sections: services offered with pricing in ProfileEditPage.tsx
+- [ ] T072 [P] [US2] Create frontend/src/pages/ProfileEditPage.tsx (reference frontend-templates for form layout and styling)
+- [ ] T073 [P] [US2] Create form sections: basic info (bio, location, skills) in ProfileEditPage.tsx (match design patterns from frontend-templates)
+- [ ] T074 [P] [US2] Create form sections: services offered with pricing in ProfileEditPage.tsx (use frontend-templates for consistent styling)
 - [ ] T075 [US2] Implement profile save functionality using sitterService.ts API calls
 - [ ] T076 [US2] Add validation feedback for required fields and min lengths
 - [ ] T077 [US2] Add success/error notifications after profile updates
 
 **Frontend - Service Management**
 
-- [ ] T078 [P] [US2] Create service management UI in ProfileEditPage.tsx (add/edit/remove services)
-- [ ] T079 [US2] Implement service type selection (overnight, daily visit, walking, medication, grooming)
+- [ ] T078 [P] [US2] Create service management UI in ProfileEditPage.tsx (add/edit/remove services, reference frontend-templates for UI patterns)
+- [ ] T079 [US2] Implement service type selection (overnight, daily visit, walking, medication, grooming, match styling from frontend-templates)
 - [ ] T080 [US2] Implement pricing input for each service (hourly or flat rate)
 - [ ] T081 [US2] Add pet type selection per service (dogs, cats, birds, reptiles, etc.)
 
@@ -193,19 +193,19 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Photo Upload**
 
-- [ ] T087 [P] [US2] Create photo upload component in ProfileEditPage.tsx
+- [ ] T087 [P] [US2] Create photo upload component in ProfileEditPage.tsx (reference frontend-templates for image display patterns)
 - [ ] T088 [US2] Implement file input and preview functionality
 - [ ] T089 [US2] Implement photo upload API call with progress indicator
 - [ ] T090 [US2] Implement photo deletion functionality
 - [ ] T091 [US2] Add validation for file size and format (client-side)
-- [ ] T092 [US2] Display uploaded photos in grid with delete option
+- [ ] T092 [US2] Display uploaded photos in grid with delete option (match grid layout from frontend-templates)
 
 **Frontend - Sitter Dashboard**
 
-- [ ] T093 [P] [US2] Create frontend/src/pages/SitterDashboardPage.tsx
+- [ ] T093 [P] [US2] Create frontend/src/pages/SitterDashboardPage.tsx (reference frontend-templates for dashboard layout and components)
 - [ ] T094 [US2] Display profile completeness indicator in SitterDashboardPage.tsx
 - [ ] T095 [US2] Add "Edit Profile" navigation link to ProfileEditPage
-- [ ] T096 [US2] Display upcoming bookings summary in SitterDashboardPage.tsx
+- [ ] T096 [US2] Display upcoming bookings summary in SitterDashboardPage.tsx (use card patterns from frontend-templates)
 
 **Mock Data Synchronization**
 
@@ -256,34 +256,34 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Booking Management (Sitter)**
 
-- [ ] T120 [P] [US3] Update frontend/src/pages/SitterDashboardPage.tsx to show pending requests
-- [ ] T121 [P] [US3] Create frontend/src/components/booking/BookingCard.tsx for request display
-- [ ] T122 [US3] Implement accept/decline buttons with confirmation dialogs in BookingCard.tsx
+- [ ] T120 [P] [US3] Update frontend/src/pages/SitterDashboardPage.tsx to show pending requests (maintain design consistency with frontend-templates)
+- [ ] T121 [P] [US3] Create frontend/src/components/booking/BookingCard.tsx for request display (reference frontend-templates for card design)
+- [ ] T122 [US3] Implement accept/decline buttons with confirmation dialogs in BookingCard.tsx (use button styling from frontend-templates)
 - [ ] T123 [US3] Implement API calls for accept/decline using bookingService.ts
 - [ ] T124 [US3] Add success/error notifications after booking actions
 - [ ] T125 [US3] Update booking list in real-time after accept/decline
 
 **Frontend - Booking Management (Owner)**
 
-- [ ] T126 [P] [US3] Update frontend/src/pages/OwnerDashboardPage.tsx to show booking statuses
-- [ ] T127 [P] [US3] Create frontend/src/components/booking/BookingStatus.tsx component
-- [ ] T128 [US3] Implement cancel booking button with confirmation in OwnerDashboardPage.tsx
+- [ ] T126 [P] [US3] Update frontend/src/pages/OwnerDashboardPage.tsx to show booking statuses (maintain consistency with frontend-templates design)
+- [ ] T127 [P] [US3] Create frontend/src/components/booking/BookingStatus.tsx component (reference frontend-templates for status indicators)
+- [ ] T128 [US3] Implement cancel booking button with confirmation in OwnerDashboardPage.tsx (use button patterns from frontend-templates)
 - [ ] T129 [US3] Display cancellation policy warning before cancel
 - [ ] T130 [US3] Implement cancel API call using bookingService.ts
 
 **Frontend - Booking Details View**
 
-- [ ] T131 [P] [US3] Create frontend/src/pages/BookingDetailsPage.tsx
-- [ ] T132 [US3] Display complete booking information (dates, services, pet details, total cost, status)
+- [ ] T131 [P] [US3] Create frontend/src/pages/BookingDetailsPage.tsx (reference frontend-templates for detail page layout)
+- [ ] T132 [US3] Display complete booking information (dates, services, pet details, total cost, status, use layout patterns from frontend-templates)
 - [ ] T133 [US3] Display sitter/owner contact information (after booking confirmed)
 - [ ] T134 [US3] Add navigation to messaging interface from booking details
-- [ ] T135 [US3] Add booking actions (cancel, contact sitter/owner) based on user role
+- [ ] T135 [US3] Add booking actions (cancel, contact sitter/owner) based on user role (match button styling from frontend-templates)
 
 **Frontend - Messaging Interface**
 
-- [ ] T136 [P] [US3] Create frontend/src/pages/MessagingPage.tsx
-- [ ] T137 [P] [US3] Create frontend/src/components/messaging/MessageThread.tsx component
-- [ ] T138 [P] [US3] Create frontend/src/components/messaging/MessageInput.tsx component
+- [ ] T136 [P] [US3] Create frontend/src/pages/MessagingPage.tsx (reference frontend-templates for page structure)
+- [ ] T137 [P] [US3] Create frontend/src/components/messaging/MessageThread.tsx component (use design patterns from frontend-templates)
+- [ ] T138 [P] [US3] Create frontend/src/components/messaging/MessageInput.tsx component (match input styling from frontend-templates)
 - [ ] T139 [US3] Implement message fetching for booking in MessagingPage.tsx using messageService.ts
 - [ ] T140 [US3] Implement message display with sender/timestamp in MessageThread.tsx
 - [ ] T141 [US3] Implement message sending in MessageInput.tsx
@@ -332,21 +332,21 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Review Submission**
 
-- [ ] T163 [P] [US5] Create frontend/src/pages/ReviewsPage.tsx
-- [ ] T164 [P] [US5] Create frontend/src/components/reviews/ReviewForm.tsx
+- [ ] T163 [P] [US5] Create frontend/src/pages/ReviewsPage.tsx (reference frontend-templates for page layout)
+- [ ] T164 [P] [US5] Create frontend/src/components/reviews/ReviewForm.tsx (use form styling from frontend-templates)
 - [ ] T165 [P] [US5] Create frontend/src/components/reviews/RatingStars.tsx component
 - [ ] T166 [US5] Implement star rating selection in RatingStars.tsx
-- [ ] T167 [US5] Implement review text input with validation in ReviewForm.tsx
+- [ ] T167 [US5] Implement review text input with validation in ReviewForm.tsx (match input styling from frontend-templates)
 - [ ] T168 [US5] Implement review submission API call
 - [ ] T169 [US5] Add "Leave Review" option in completed bookings list
 - [ ] T170 [US5] Show confirmation after review submitted
 
 **Frontend - Review Display**
 
-- [ ] T171 [P] [US5] Create frontend/src/components/reviews/ReviewList.tsx
-- [ ] T172 [US5] Update SitterProfile.tsx to display average rating and review count
+- [ ] T171 [P] [US5] Create frontend/src/components/reviews/ReviewList.tsx (reference frontend-templates for list/card layout)
+- [ ] T172 [US5] Update SitterProfile.tsx to display average rating and review count (match design patterns from frontend-templates)
 - [ ] T173 [US5] Implement review list display with pagination in ReviewList.tsx
-- [ ] T174 [US5] Display individual review cards (rating, comment, date, reviewer name) in ReviewList.tsx
+- [ ] T174 [US5] Display individual review cards (rating, comment, date, reviewer name) in ReviewList.tsx (use card styling from frontend-templates)
 - [ ] T175 [US5] Add aggregate rating display (average stars, total reviews) in sitter profile
 
 **Mock Data Synchronization**
@@ -388,19 +388,19 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 
 **Frontend - Filter Interface**
 
-- [ ] T192 [P] [US6] Create frontend/src/components/search/SearchFilters.tsx component
-- [ ] T193 [US6] Implement pet type filter (checkboxes: dog, cat, bird, reptile, other) in SearchFilters.tsx
-- [ ] T194 [US6] Implement service type filter (checkboxes: overnight, daily visit, walking, medication, grooming) in SearchFilters.tsx
+- [ ] T192 [P] [US6] Create frontend/src/components/search/SearchFilters.tsx component (reference frontend-templates/listings-page.png for filter layout)
+- [ ] T193 [US6] Implement pet type filter (checkboxes: dog, cat, bird, reptile, other) in SearchFilters.tsx (match styling from frontend-templates)
+- [ ] T194 [US6] Implement service type filter (checkboxes: overnight, daily visit, walking, medication, grooming) in SearchFilters.tsx (use patterns from frontend-templates)
 - [ ] T195 [US6] Implement price range slider in SearchFilters.tsx
 - [ ] T196 [US6] Implement minimum rating filter (star selection) in SearchFilters.tsx
 - [ ] T197 [US6] Implement special skills filter (checkboxes or multi-select) in SearchFilters.tsx
-- [ ] T198 [US6] Add "Clear Filters" button in SearchFilters.tsx
+- [ ] T198 [US6] Add "Clear Filters" button in SearchFilters.tsx (match button styling from frontend-templates)
 - [ ] T199 [US6] Implement filter state management in SearchPage.tsx
 
 **Frontend - Filtered Results**
 
 - [ ] T200 [US6] Update SearchPage.tsx to pass filters to API call
-- [ ] T201 [US6] Update SearchResults.tsx to display filter summary
+- [ ] T201 [US6] Update SearchResults.tsx to display filter summary (use design patterns from frontend-templates)
 - [ ] T202 [US6] Show filter count badge (e.g., "3 filters applied") in SearchResults.tsx
 - [ ] T203 [US6] Display "No results" message with filter adjustment suggestions
 - [ ] T204 [US6] Implement filter persistence in URL query parameters for shareable links
@@ -460,10 +460,258 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 - [ ] T234 Verify mock data synchronization across all three locations (data/, frontend/, backend/)
 - [ ] T235 Test marketplace with REACT_APP_USE_MOCK_DATA toggle (both true and false)
 - [ ] T236 Verify Aspire Dashboard shows all services healthy with marketplace endpoints
-- [ ] T237 Test deployment to Azure Container Apps via `aspire deploy`
-- [ ] T238 Performance test: verify search results load in <3 seconds
-- [ ] T239 Performance test: verify booking submission completes in <5 seconds
-- [ ] T240 Create data-model.md with complete entity schemas in specs/001-pet-sitter-marketplace/
+- [ ] T237 Performance test: verify search results load in <3 seconds
+- [ ] T238 Performance test: verify booking submission completes in <5 seconds
+- [ ] T239 Create data-model.md with complete entity schemas in specs/001-pet-sitter-marketplace/
+
+---
+
+## Phase 10: Azure Deployment & Production Setup
+
+**Goal**: Deploy the complete Octopets marketplace (backend, agents, frontend) to Azure using .NET Aspire and Azure Developer CLI (azd)
+
+**Prerequisites**: All desired user stories implemented and tested locally via `aspire run`
+
+**Independent Test**: Deploy to Azure, access production URLs, verify all services running, test end-to-end flows in production environment, confirm AI agents integrated with Azure AI Foundry
+
+### Pre-Deployment Preparation
+
+**Azure Prerequisites**
+
+- [ ] T240 Verify Azure CLI installed and authenticated (`az login`, `az account show`)
+- [ ] T241 Verify Azure Developer CLI (azd) installed (`azd version` >= 1.9.0)
+- [ ] T242 [P] Create Azure resource group or identify target resource group for deployment
+- [ ] T243 [P] Verify Azure subscription has required resource providers registered (Microsoft.App, Microsoft.ContainerRegistry, Microsoft.OperationalInsights)
+- [ ] T244 Set target Azure region (recommend: eastus, westus2, or westeurope for AI Foundry availability)
+- [ ] T245 Verify user has Contributor role on target subscription/resource group
+
+**Azure AI Foundry Setup**
+
+- [ ] T246 Create Azure AI Foundry project in Azure Portal or via CLI
+- [ ] T247 Note Azure OpenAI endpoint URL and deployment names (set in azd environment)
+- [ ] T248 Configure managed identity or service principal for agent authentication
+- [ ] T249 [P] Upload agent data files (pet-sitter.json, venue data) to Azure AI Foundry project file storage
+- [ ] T250 [P] Create or identify vector store IDs for listings agent file search capability
+- [ ] T251 Test Azure OpenAI connection from local machine using DefaultAzureCredential
+
+**Aspire Configuration Review**
+
+- [ ] T252 Review apphost/AppHost.cs for production configuration (`builder.ExecutionContext.IsPublishMode` logic)
+- [ ] T253 Verify `.AddPythonScript(...).PublishAsDockerFile()` configured for all agents (listings, sitter, orchestrator)
+- [ ] T254 Review backend/appsettings.json and ensure no hardcoded dev URLs or secrets
+- [ ] T255 Verify CORS configuration in backend/Program.cs uses dynamic `FRONTEND_URL` from AppHost
+- [ ] T256 Review frontend build configuration (`REACT_APP_USE_MOCK_DATA=false` for production)
+- [ ] T257 Verify all service references in AppHost.cs use `.WithReference()` for service discovery
+
+**Environment Variables & Secrets**
+
+- [ ] T258 Create `.azure/<environment>/.env` file for azd deployment (e.g., `.azure/production/.env`)
+- [ ] T259 Define required environment variables: `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT`, `AZURE_AI_PROJECT_NAME`
+- [ ] T260 [P] Define agent-specific variables: `AGENT_ID` (listings agent), vector store IDs
+- [ ] T261 [P] Configure connection strings and managed identity client IDs if needed
+- [ ] T262 Test environment variable injection locally by simulating publish mode
+
+**Dockerfile & Container Preparation**
+
+- [ ] T263 Verify Dockerfile exists for backend (or will be generated by Aspire)
+- [ ] T264 Verify Dockerfile will be generated for each Python agent (agent/, sitter-agent/, orchestrator-agent/)
+- [ ] T265 Test Python agent Dockerfiles build locally: `docker build -t test-agent ./agent`
+- [ ] T266 Verify frontend production build works: `cd frontend && npm run build`
+- [ ] T267 Test frontend build output in /frontend/build directory contains all assets
+- [ ] T268 [P] Optimize Docker images: use multi-stage builds, minimize layers, .dockerignore files
+
+### Deployment Execution
+
+**Initialize Azure Developer CLI**
+
+- [ ] T269 Run `azd init` in project root (if not already initialized)
+- [ ] T270 Select or create azd environment (e.g., `production`, `staging`)
+- [ ] T271 Verify `azure.yaml` file exists in project root with all services defined
+- [ ] T272 Review `azure.yaml` service definitions: backend, frontend, agent, sitter-agent, orchestrator-agent
+- [ ] T273 Verify `infra/` directory contains Bicep templates (generated by Aspire or custom)
+
+**Deploy Infrastructure & Services**
+
+- [ ] T274 Run `azd auth login` to authenticate with Azure (if not already logged in)
+- [ ] T275 Run `azd env set AZURE_SUBSCRIPTION_ID <subscription-id>` to target subscription
+- [ ] T276 Run `azd env set AZURE_LOCATION <region>` to set deployment region
+- [ ] T277 Set production environment variables: `azd env set AZURE_OPENAI_ENDPOINT <endpoint>`
+- [ ] T278 Set agent configuration: `azd env set AGENT_ID <foundry-agent-id>`
+- [ ] T279 Run `azd provision` to create Azure resources (Container Apps Environment, Log Analytics, Container Registry, Application Insights)
+- [ ] T280 Monitor provision output for resource creation: Container Apps Environment, managed environment, registries
+- [ ] T281 Verify resource group created with all expected resources in Azure Portal
+
+**Deploy Application Code**
+
+- [ ] T282 Run `azd deploy` to build and deploy all services (backend, frontend, all agents)
+- [ ] T283 Monitor deployment progress for each service: backend → frontend → agent → sitter-agent → orchestrator-agent
+- [ ] T284 Verify container images built and pushed to Azure Container Registry
+- [ ] T285 Verify Container Apps created for each service with correct image references
+- [ ] T286 Check deployment logs for each Container App in Azure Portal (Log Analytics queries)
+- [ ] T287 Verify environment variables injected correctly into each Container App
+
+**Alternative: Use Aspire Deploy**
+
+- [ ] T288 Run `aspire deploy` as alternative to azd (if using Aspire CLI directly)
+- [ ] T289 Follow Aspire deployment prompts for Azure subscription, region, resource group selection
+- [ ] T290 Monitor Aspire deployment output for infrastructure provisioning and container deployment
+- [ ] T291 Verify Aspire-generated Bicep files in `infra/` directory match expected architecture
+
+### Post-Deployment Configuration
+
+**Service Connectivity & CORS**
+
+- [ ] T292 Get deployed frontend URL from Azure Portal or `azd show` output
+- [ ] T293 Verify backend Container App environment variable `FRONTEND_URL` set to production frontend URL
+- [ ] T294 Update CORS policy in backend if needed (should be dynamic via AppHost)
+- [ ] T295 Test CORS by accessing frontend and making API calls to backend
+
+**Agent Integration Verification**
+
+- [ ] T296 Verify listings agent Container App has `AZURE_OPENAI_ENDPOINT` and `AGENT_ID` set
+- [ ] T297 Verify sitter agent Container App has access to pet-sitter.json (mount or environment)
+- [ ] T298 Verify orchestrator agent has correct URLs for listings agent and sitter agent (service discovery)
+- [ ] T299 Test agent endpoints directly: `https://<agent-url>/health` returns 200
+- [ ] T300 Test agent query: POST to `https://<agent-url>/query` with sample message
+
+**Azure AI Foundry Configuration**
+
+- [ ] T301 Verify agents authenticate to Azure AI Foundry using managed identity
+- [ ] T302 Test file search capability for listings agent (query should return venue data)
+- [ ] T303 Verify vector store attached to agent threads in production
+- [ ] T304 Monitor Azure AI Foundry logs for agent API calls and token usage
+- [ ] T305 Configure rate limits and quotas for Azure OpenAI deployment if needed
+
+**Database & Data Storage**
+
+- [ ] T306 Verify backend uses in-memory database OR provision Azure SQL/Cosmos DB if persistence needed
+- [ ] T307 Run database migration or seed data in production (if using persistent DB)
+- [ ] T308 Verify mock data disabled in production (`REACT_APP_USE_MOCK_DATA=false`)
+- [ ] T309 Test data flow: frontend → backend API → database (if applicable)
+
+**Monitoring & Observability**
+
+- [ ] T310 Verify Application Insights created and linked to all Container Apps
+- [ ] T311 Check Application Insights for incoming requests, dependencies, exceptions
+- [ ] T312 Verify OpenTelemetry traces visible in Application Insights (distributed tracing)
+- [ ] T313 Create Azure Monitor dashboard for key metrics (requests/sec, latency, errors)
+- [ ] T314 Set up alerts for critical errors (5xx responses, agent failures, high latency)
+- [ ] T315 Test live metrics in Application Insights while using application
+
+**Security & Networking**
+
+- [ ] T316 Verify Container Apps ingress configured correctly (internal vs external)
+- [ ] T317 Enable HTTPS for all public endpoints (frontend, backend)
+- [ ] T318 Verify managed identity assigned to agent Container Apps for Azure AI Foundry access
+- [ ] T319 Review network security: Container Apps Environment firewall rules, if any
+- [ ] T320 Test authentication flow end-to-end (if authentication implemented)
+- [ ] T321 [P] Configure custom domain and SSL certificate for frontend (optional)
+
+### End-to-End Production Testing
+
+**Smoke Tests**
+
+- [ ] T322 Access production frontend URL, verify page loads
+- [ ] T323 Test frontend health: check for console errors, broken links, missing assets
+- [ ] T324 Test backend health endpoint: `GET https://<backend-url>/health` returns 200
+- [ ] T325 Test agent health endpoints for all three agents (listings, sitter, orchestrator)
+
+**User Story Validation in Production**
+
+- [ ] T326 Test User Story 1: Search for sitters by location and dates in production
+- [ ] T327 Test User Story 1: View sitter profile, verify images and data load
+- [ ] T328 Test User Story 1: Submit booking request, verify confirmation
+- [ ] T329 Test User Story 2: Edit sitter profile (if authenticated), save changes
+- [ ] T330 Test User Story 2: Update availability calendar, verify changes persist
+- [ ] T331 Test User Story 3: Accept/decline booking as sitter (if implemented)
+- [ ] T332 Test User Story 3: Send message between owner and sitter (if implemented)
+- [ ] T333 Test User Story 5: Submit review after completed booking (if implemented)
+- [ ] T334 Test User Story 6: Use advanced search filters, verify results (if implemented)
+
+**Agent Integration Testing**
+
+- [ ] T335 Test orchestrator agent via frontend: ask complex query involving listings AND sitter
+- [ ] T336 Test listings agent directly: query for pet venues, verify file search results
+- [ ] T337 Test sitter agent directly: query for pet sitter info, verify JSON data retrieval
+- [ ] T338 Verify agent responses display correctly in frontend chat interface
+- [ ] T339 Check Application Insights for agent API call traces and latency
+
+**Performance & Load Testing**
+
+- [ ] T340 Test search performance: verify results load in <3 seconds under normal load
+- [ ] T341 Test booking submission: verify completes in <5 seconds
+- [ ] T342 Test agent response time: verify AI responses return in <10 seconds
+- [ ] T343 [P] Run load test: simulate 50 concurrent users, monitor Container Apps auto-scaling
+- [ ] T344 [P] Monitor Azure OpenAI throttling and adjust deployment tier if needed
+
+**Error Handling & Resilience**
+
+- [ ] T345 Test backend error handling: trigger 400/404 errors, verify friendly messages
+- [ ] T346 Test agent failure: disable agent, verify frontend shows graceful error
+- [ ] T347 Test network failure: simulate timeout, verify retry logic or error message
+- [ ] T348 Verify Application Insights logs all errors with stack traces
+
+### Operational Readiness
+
+**Documentation & Runbooks**
+
+- [ ] T349 Document deployment process in `/docs/deployment.md` with azd commands
+- [ ] T350 Create runbook for scaling Container Apps (manual or auto-scale configuration)
+- [ ] T351 Create runbook for updating agent configuration (environment variables, agent IDs)
+- [ ] T352 Document rollback procedure: redeploy previous version using azd
+- [ ] T353 Create troubleshooting guide for common deployment issues (CORS, agent auth, etc.)
+
+**Cost Management**
+
+- [ ] T354 Review Azure Cost Management for resource costs (Container Apps, AI Foundry, storage)
+- [ ] T355 Set up cost alerts for monthly spend thresholds
+- [ ] T356 Optimize Container Apps scaling: set min/max replicas based on expected load
+- [ ] T357 Monitor Azure OpenAI token usage and costs
+- [ ] T358 Consider Azure Dev/Test pricing or reserved instances for cost savings
+
+**Backup & Disaster Recovery**
+
+- [ ] T359 Document data backup strategy (if using persistent database)
+- [ ] T360 Test infrastructure redeployment: delete resource group, run `azd provision && azd deploy`
+- [ ] T361 Document agent data backup: vector stores, file storage in Azure AI Foundry
+- [ ] T362 Create disaster recovery plan: RTO/RPO targets, failover procedures
+
+**CI/CD Pipeline Setup (Optional)**
+
+- [ ] T363 Create GitHub Actions workflow for automated deployment on merge to main
+- [ ] T364 Configure GitHub Actions workflow to run `azd deploy` with secrets
+- [ ] T365 Set up GitHub environments (staging, production) with approval gates
+- [ ] T366 Add smoke tests to GitHub Actions workflow (post-deployment validation)
+- [ ] T367 Configure deployment notifications (Slack, Teams, email)
+
+**Continuous Improvement**
+
+- [ ] T368 Monitor Application Insights for 7 days, identify performance bottlenecks
+- [ ] T369 Review Container Apps logs for warnings or repeated errors
+- [ ] T370 Gather user feedback on production performance and stability
+- [ ] T371 Create backlog items for optimizations (caching, CDN, database indexing)
+- [ ] T372 Schedule regular security reviews and dependency updates
+
+---
+
+## Summary (Updated)
+
+- **Total Tasks**: 372 tasks across 10 phases (132 new deployment tasks added)
+- **MVP Tasks**: T001-T107 (107 tasks for User Stories 1 + 2)
+- **Deployment Tasks**: T240-T372 (133 tasks for Azure deployment and production setup)
+- **Critical Path**: Setup → Foundational (BLOCKS everything) → User Stories (priority order) → Deployment
+- **Deployment Prerequisites**: 
+  - Azure CLI and azd installed
+  - Azure subscription with Contributor access
+  - Azure AI Foundry project configured
+  - All user stories tested locally via `aspire run`
+- **Deployment Strategy**:
+  - Pre-deployment preparation (T240-T268)
+  - Infrastructure provisioning via azd (T269-T281)
+  - Application deployment (T282-T291)
+  - Post-deployment configuration (T292-T321)
+  - Production testing (T322-T348)
+  - Operational readiness (T349-T372)
 
 ---
 
@@ -480,6 +728,7 @@ description: "Task breakdown for Pet Sitter Marketplace implementation"
 - **User Story 6 (Phase 7)**: Depends on User Story 1 (enhances existing search)
 - **Agent Integration (Phase 8)**: Optional, depends on User Story 1 and 2
 - **Polish (Phase 9)**: Depends on all desired user stories being complete
+- **Azure Deployment (Phase 10)**: Depends on all desired user stories and polish being complete, requires local testing via `aspire run` successful
 
 ### User Story Independence
 
@@ -571,17 +820,46 @@ Mock Data Developer (parallel):
 3. ✅ Complete Phase 3: User Story 1 (T016-T060) - Search and Booking
 4. ✅ Complete Phase 4: User Story 2 (T061-T107) - Profile Management (can overlap with US1)
 5. **STOP and VALIDATE**: Test both stories independently, verify constitution compliance
-6. Deploy/demo if ready - This is a functional marketplace MVP!
+6. Complete Phase 9: Polish (T220-T239) - Production readiness
+7. Complete Phase 10: Azure Deployment (T240-T372) - Deploy to production
+8. Deploy/demo - This is a functional marketplace MVP in production!
 
 ### Incremental Delivery (Recommended)
 
 1. Complete Setup + Foundational → Foundation ready
-2. Add User Story 1 → Test independently → Deploy/Demo (Core marketplace function!)
-3. Add User Story 2 (parallel or sequential) → Test independently → Deploy/Demo (Complete marketplace MVP!)
-4. Add User Story 3 → Test independently → Deploy/Demo (Full lifecycle management)
-5. Add User Story 5 → Test independently → Deploy/Demo (Trust and ratings)
-6. Add User Story 6 → Test independently → Deploy/Demo (Enhanced discovery)
-7. Each story adds value without breaking previous stories
+2. Add User Story 1 → Test independently → Local Demo
+3. Add User Story 2 (parallel or sequential) → Test independently → Local Demo (Complete marketplace MVP!)
+4. Add User Story 3 → Test independently → Local Demo (Full lifecycle management)
+5. Add User Story 5 → Test independently → Local Demo (Trust and ratings)
+6. Add User Story 6 → Test independently → Local Demo (Enhanced discovery)
+7. Complete Phase 9: Polish → Production readiness checkpoint
+8. Complete Phase 10: Azure Deployment → Production deployment and testing
+9. Each story adds value without breaking previous stories
+
+### Azure Deployment Strategy (Phase 10)
+
+**Option A: Deploy MVP (Recommended for first deployment)**
+
+1. Complete User Stories 1 + 2 (MVP features)
+2. Complete Phase 9: Polish and production readiness
+3. Run Phase 10 deployment tasks T240-T372
+4. Validate in production, gather feedback
+5. Iterate on additional user stories and redeploy
+
+**Option B: Deploy Complete Marketplace**
+
+1. Complete all desired user stories (1, 2, 3, 5, 6)
+2. Complete Phase 9: Polish
+3. Run Phase 10 deployment tasks
+4. Full production validation
+
+**Option C: Continuous Deployment**
+
+1. Complete MVP (US1 + US2)
+2. Deploy to Azure staging environment
+3. Add user stories incrementally
+4. Promote to production after each story validation
+5. Use CI/CD pipeline (T363-T367) for automation
 
 ### Parallel Team Strategy
 
@@ -603,16 +881,30 @@ With 2 developers:
 
 ---
 
-## Summary
+## Summary (Updated)
 
-- **Total Tasks**: 240 tasks across 9 phases
+- **Total Tasks**: 372 tasks across 10 phases (132 new deployment tasks added)
 - **MVP Tasks**: T001-T107 (107 tasks for User Stories 1 + 2)
-- **Critical Path**: Setup → Foundational (15 tasks, BLOCKS everything) → User Stories (priority order)
+- **Polish Tasks**: T220-T239 (20 tasks for production readiness)
+- **Deployment Tasks**: T240-T372 (133 tasks for Azure deployment and production setup)
+- **Critical Path**: Setup → Foundational (BLOCKS everything) → User Stories (priority order) → Polish → Deployment
+- **Deployment Prerequisites**: 
+  - Azure CLI and azd installed
+  - Azure subscription with Contributor access
+  - Azure AI Foundry project configured
+  - All user stories tested locally via `aspire run`
+- **Deployment Tools**:
+  - Azure Developer CLI (azd) for infrastructure provisioning and deployment
+  - .NET Aspire for orchestration and container configuration
+  - Azure Container Apps for hosting backend, frontend, and agents
+  - Azure AI Foundry for agent AI capabilities
+  - Application Insights for monitoring and telemetry
 - **Parallel Opportunities**: 
   - Phase 1: 2 task groups
   - Phase 2: 3 task groups
   - Phase 3: 4 task groups (backend, frontend, mock data can be parallel)
   - Phase 4: Can run ENTIRELY parallel with Phase 3 if staffed
+  - Phase 10: Many deployment tasks can run in parallel (T242-T251, T258-T268)
 - **User Stories**:
   - US1 (P1): 45 tasks - Search and Booking (MVP core)
   - US2 (P1): 47 tasks - Profile Management (MVP core, parallel with US1)
@@ -620,6 +912,12 @@ With 2 developers:
   - US5 (P3): 29 tasks - Reviews & Ratings
   - US6 (P3): 28 tasks - Advanced Filters
 - **Constitution Compliance**: All tasks follow mock data sync, Aspire orchestration, service discovery, and independent story delivery principles
+- **Deployment Phases**:
+  - Pre-deployment preparation (29 tasks): Azure setup, AI Foundry configuration, environment prep
+  - Infrastructure & deployment (23 tasks): azd provisioning and code deployment
+  - Post-deployment configuration (30 tasks): CORS, agents, database, monitoring, security
+  - Production testing (27 tasks): smoke tests, user story validation, performance testing
+  - Operational readiness (24 tasks): documentation, cost management, CI/CD, continuous improvement
 
 ---
 
@@ -630,6 +928,12 @@ With 2 developers:
 - **Checkpoint validation**: Stop after each user story phase to test independently
 - **Mock data sync**: T051-T054, T097-T100, T145-T148, T176-T179 are CRITICAL - must maintain parity
 - **Constitution VII compliance**: Each user story delivers standalone value and can be deployed independently
-- **MVP recommendation**: Complete US1 + US2 (Phases 1-4) for functional marketplace
+- **MVP recommendation**: Complete US1 + US2 (Phases 1-4) for functional marketplace, then deploy (Phases 9-10)
 - **Testing approach**: Manual testing via Aspire Dashboard, frontend E2E tests for critical paths, optional backend tests
 - **User Story 4 (Payment)**: Intentionally deferred to future phase - not in current task breakdown
+- **Azure deployment**: Use azd for infrastructure + deployment, or `aspire deploy` for integrated approach
+- **Production readiness**: Phase 9 must be complete before Phase 10 deployment
+- **Cost optimization**: Start with minimal Container Apps replicas, monitor usage, scale as needed
+- **Agent authentication**: Use managed identity for Azure AI Foundry in production (no API keys in code)
+- **CI/CD optional**: Tasks T363-T367 for automated GitHub Actions deployment are optional but recommended for long-term maintenance
+- **Frontend design templates**: All frontend tasks reference `/frontend-templates` directory images (main-page1.png, main-page2.png, listings-page.png, main-page-footer.png) as design references for layout, styling, and component structure - use these as visual guides to ensure consistent UI/UX across the marketplace
