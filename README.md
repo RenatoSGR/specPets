@@ -46,7 +46,7 @@ This Repo is the reproducible demo from Microsoft Build 2025, and from GitHub Un
 ### 🎯 Quick Start (Using SpecKit)
 #### **Video with the process**
 
-[![Watch the video](https://raw.githubusercontent.com/RenatoSGR/specPets/main/media/video.png)](https://raw.githubusercontent.com/RenatoSGR/specPets/main/media/SpecPets.mp4)
+https://raw.githubusercontent.com/RenatoSGR/specPets/main/media/SpecPets.mp4
 
 SpecKit enables AI-assisted implementation of the pet sitter marketplace using the task breakdown in `/specs/pet-sitter-marketplace/tasks.md`.
 
