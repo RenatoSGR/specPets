@@ -10,6 +10,6 @@ frameworks: [ Microsoft Agent Framework , React] #| Aspire | LangChain | Pydanti
 tags: [🌱 Spec Kit] # Labels used to categorize the template
 extensions: [] # Identifiers of the extensions being used in the template. Example: ms-windows-ai-studio.windows-ai-studio 
 thumbnail: thumbnail.png # (optional) Full URL or relative path with an image with 16:9 aspect ratio: 1280 × 720 (HD), 1920 × 1080 (Full HD)
-video: # (optional) Full URL or relative path with a video to showcase the template usage
+video: https://microsofteur-my.sharepoint.com/:v:/g/personal/renribeiro_microsoft_com/Ef5SNVyYdi5KqDOKnMNTHDMBT3hRSEdy3a8HlHNpqYp8tA?e=7r8tva # (optional) Full URL or relative path with a video to showcase the template usage
 version: 1.0.0 # (optional) Semantic versioning. Consider using a CHANGELOG.md with the version details 
 ---
