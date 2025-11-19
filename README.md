@@ -44,6 +44,8 @@ This Repo is the reproducible demo from Microsoft Build 2025, and from GitHub Un
 | C# Dev Kit | Latest | [C# Dev Kit Extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) |
 
 ### 🎯 Quick Start (Using SpecKit)
+#### **Video with the process**
+[![Watch the video](https://microsofteur-my.sharepoint.com/:v:/g/personal/renribeiro_microsoft_com/Ef5SNVyYdi5KqDOKnMNTHDMBT3hRSEdy3a8HlHNpqYp8tA?e=7r8tva)
 
 SpecKit enables AI-assisted implementation of the pet sitter marketplace using the task breakdown in `/specs/pet-sitter-marketplace/tasks.md`.
 
