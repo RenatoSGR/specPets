@@ -47,7 +47,7 @@ This Repo is the reproducible demo from Microsoft Build 2025, and from GitHub Un
 #### **Video with the process**
 
 <video width="640" height="360" controls>
-  <source src="media/SpecPets.mp4" type="video/mp4">
+  <source src="https://github.com/RenatoSGR/specPets/raw/refs/heads/main/media/SpecPets.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
