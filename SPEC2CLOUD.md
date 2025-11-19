@@ -4,7 +4,7 @@ description: A pet sitter marketplace platform that enables pet owners to search
 authors: RenatoSGR
 category: AI Apps & Agents # AI Apps & Agents | App Modernization | Data Centric Apps | Agentic DevOps
 industry: Cross-Industry # Cross-Industry | Finantial Services | Healthcare & Life Sciences | Manufacturing | Retail & Consumer Goods | Government & Public Sector | Education | Energy & Resources | Telco & Media | Mobility & Automotive
-services: [Azure AI Foundry, Azure Container Apps] # Full list here: https://azure.microsoft.com/en-us/products/
+services: [Microsoft Foundry, Azure Container Apps] # Full list here: https://azure.microsoft.com/en-us/products/
 languages: [.NET] # .NET | Python | Java | Go | TypeSscript | JavaScript | BICEP | Terraform
 frameworks: [ Microsoft Agent Framework , React] #| Aspire | LangChain | Pydantic AI
 tags: [🌱 Spec Kit] # Labels used to categorize the template
